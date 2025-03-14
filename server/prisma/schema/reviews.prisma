@@ -1,0 +1,6 @@
+model Reviews {
+    id Int @default(autoincrement()) @id
+    name String
+    title String @db.VarChar(255) 
+    stars Int  
+}

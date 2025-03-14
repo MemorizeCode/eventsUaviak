@@ -1,0 +1,16 @@
+model RecordGroup {
+    id Int @default(autoincrement()) @id
+    school String
+    class String
+    firstNameAttendant String //Имя сопровождающего
+    lastNameAttendant String //Фамилия сопровождающего
+    SurnameAttendant String? //Отчество сопровождающего
+    phone String
+    countPeople Int //Не более указанного????
+    listPeople String //Путь до файлаа
+
+
+    //на какой записались
+    events Events @relation(fields: [eventsId], references: [id])
+    eventsId Int
+}

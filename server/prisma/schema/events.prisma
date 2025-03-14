@@ -1,0 +1,19 @@
+model Events {
+    id Int @default(autoincrement()) @id
+    title String @db.VarChar(250)
+    description String @db.VarChar(999)
+    date DateTime 
+    times String
+    duration Int //В МИНУТАХ
+    cabinet String  
+    people_count Int //сколько человек помещается
+    whoClasses String //для каких классов (8-9)
+    isDelete Boolean @default(false)
+    prepod String 
+    //Связи
+    eventSpeciality EventSpeciality @relation(fields: [specialityId], references:[id])
+    specialityId Int
+
+    recordGr RecordGroup[]
+    recordInv RecordInvididual[]
+}

@@ -1,0 +1,15 @@
+.modalText{
+    text-align: center;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.button {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    margin-top: 15px;
+    padding: 10px;
+    font-weight: bolder;
+    font-size: 16px;
+}

@@ -1,0 +1,13 @@
+model RecordInvididual {
+    id Int @default(autoincrement()) @id
+    firstName String //Имя
+    lastName String //Фамилия
+    surname String? //Отчество
+    school String
+    class String
+    telephoneNumber String
+
+    //на какой записан
+    events Events @relation(fields: [eventsId], references: [id])
+    eventsId Int
+}

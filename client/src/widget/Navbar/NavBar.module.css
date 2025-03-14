@@ -1,0 +1,6 @@
+a.active {
+    color: #456B92;
+}
+.ant-menu-horizontal, .ant-menu-item::after, .ant-menu-submenu::after {
+    border: none !important;
+  }

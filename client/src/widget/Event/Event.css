@@ -1,0 +1,25 @@
+.event-block {
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+  }
+  
+  .event-title {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+  }
+  
+  .event-description {
+    margin-bottom: 15px;
+  }
+  
+  .event-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .event-detail {
+    flex: 1 0 200px; /* Ширина для каждого поля */
+  }
