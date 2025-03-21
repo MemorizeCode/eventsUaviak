@@ -6,8 +6,8 @@ model Events {
     times String
     duration Int //В МИНУТАХ
     cabinet String  
-    people_count Int //сколько человек помещается
-    whoClasses String //для каких классов (8-9)
+    people_count Int
+    whoClasses String
     isDelete Boolean @default(false)
     prepod String 
     //Связи

@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    networks:
+      - app-network
+    environment:
+      - VITE_API_BACKEND=http://localhost:3000/api/
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=mysql://root:root@host.docker.internal:3306/eventsUaviak?connection_limit=5&connect_timeout=30
+      - VITE_API_BACKEND=http://localhost:3000/api/
+      - CORS_ORIGIN=http://localhost:80
+      - ACCESS_KEY=key1
+      - REFRESH_KEY=key2
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: sh -c "sleep 10 && npm run start:prod"
+    networks:
+      - app-network
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=eventsUaviak
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mysql_data:
+
+networks:
+  app-network:
+    driver: bridge 

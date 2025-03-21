@@ -11,7 +11,15 @@ export default defineConfig({
     }
   },
   build: {
-    sourcemap: false, // Отключить генерацию sourcemaps для уменьшения размера бандла, если не нужен дебаг
-    chunkSizeWarningLimit: 700, // Увеличьте этот лимит, если хотите уменьшить предупреждения при сборке
+    sourcemap: false,
+    chunkSizeWarningLimit: 700,
   },
+  server: {
+    watch: {
+     usePolling: true,
+    },
+    host: true, 
+    strictPort: true,
+    port: 8080, 
+  }
 })

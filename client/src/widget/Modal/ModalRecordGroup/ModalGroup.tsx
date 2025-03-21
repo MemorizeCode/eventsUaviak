@@ -4,7 +4,13 @@ import { useDispatch } from 'react-redux';
 import { fetchRecordGr } from '@/features/RecordGroup/model/service/fetchRecord';
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload';
 
-const ModalGroup = ({ isOpen, closeModal, idEvent }: any) => {
+interface ModalGroupProps {
+  isOpen: boolean;
+  closeModal: () => void;
+  idEvent: string;
+}
+
+const ModalGroup = ({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -47,31 +53,24 @@ const ModalGroup = ({ isOpen, closeModal, idEvent }: any) => {
 
   const onFinish = async () => {
     try {
-      const formDataToSend = new FormData();
-
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value !== null) {
-          formDataToSend.append(key, value.toString());
-        }
-      });
-
-      if (fileList.length > 0) {
-        formDataToSend.append("file", fileList[0].originFileObj as RcFile);
-      }
-      formDataToSend.append("idEvent", idEvent);
-
-
-      const response = await dispatch(fetchRecordGr(formDataToSend));
-
+      const response = await dispatch(
+        fetchRecordGr({
+          formData,
+          fileList,
+          idEvent,
+        })
+      );
+  
       if (response.meta.requestStatus === "fulfilled") {
         form.resetFields();
         setFileList([]);
         closeModal();
+        message.success("Успешно записались на мероприятие");
+      } else if (response.meta.requestStatus === "rejected") {
+        message.error(response.payload);
       }
-      else if (response.meta.requestStatus == "rejected") {
-        message.error(response.payload)
-      }
-    } catch (err) {
+    } catch (e) {
+      console.log(e)
       setError("Произошла ошибка при отправке данных.");
     }
   };
@@ -94,28 +93,6 @@ const ModalGroup = ({ isOpen, closeModal, idEvent }: any) => {
           onFinish={onFinish}
           autoComplete="off"
         >
-          <Form.Item
-            label="Школа"
-            name="school"
-            rules={[{ required: true, message: 'Введите школу!' }]}
-          >
-            <Input
-              name="school"
-              value={formData.school}
-              onChange={handleInputChange}
-            />
-          </Form.Item>
-          <Form.Item
-            label="Класс"
-            name="classSchool"
-            rules={[{ required: true, message: 'Введите класс!' }]}
-          >
-            <Input
-              name="classSchool"
-              value={formData.classSchool}
-              onChange={handleInputChange}
-            />
-          </Form.Item>
           <Form.Item
             label="Имя сопровождающего"
             name="firstNameAttendant"
@@ -146,6 +123,28 @@ const ModalGroup = ({ isOpen, closeModal, idEvent }: any) => {
             <Input
               name="surnameAttendant"
               value={formData.surnameAttendant}
+              onChange={handleInputChange}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Школа"
+            name="school"
+            rules={[{ required: true, message: 'Введите школу!' }]}
+          >
+            <Input
+              name="school"
+              value={formData.school}
+              onChange={handleInputChange}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Класс"
+            name="classSchool"
+            rules={[{ required: true, message: 'Введите класс!' }]}
+          >
+            <Input
+              name="classSchool"
+              value={formData.classSchool}
               onChange={handleInputChange}
             />
           </Form.Item>

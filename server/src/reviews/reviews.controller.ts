@@ -2,9 +2,8 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Req, UseGu
 import { ReviewsService } from './reviews.service';
 import { ReviewsDTO } from './dto/ReviewsDTO';
 import { AdminGuard } from 'src/guard/admin.guard';
-import { query } from 'express';
 
-@Controller('/api/reviews')
+@Controller('/reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
@@ -21,7 +20,7 @@ export class ReviewsController {
   @HttpCode(200)
   async deleteReviews(@Query() query){
     const {id} = query
-    const result = await this.reviewsService.deleteReviews(id)
+    const result = await this.reviewsService.deleteReview(id)
     return result
   }
 

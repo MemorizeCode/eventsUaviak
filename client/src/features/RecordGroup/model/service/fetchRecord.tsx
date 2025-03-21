@@ -1,14 +1,16 @@
-import { $api } from '@/app/config/api';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { message } from 'antd';
+import  $api from "@/app/config/api";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import { UploadFile } from "antd";
 
 export const fetchRecordGr: any = createAsyncThunk(
   "fetchRecordGr",
   async (
-    { firstNameAttendant, lastNameAttendant, surnameAttendant, school, classSchool, countPeople, fileList, idEvent, tel }: any,
+    { formData, fileList, idEvent }: { formData: any; fileList: UploadFile[]; idEvent: number },
     thunkAPI
   ) => {
     try {
+      const { firstNameAttendant, lastNameAttendant, surnameAttendant, school, classSchool, countPeople, tel } = formData;
+
       const nameRegex = /^[a-zA-Zа-яА-Я\s'-]+$/;
 
       if (!firstNameAttendant || typeof firstNameAttendant !== 'string' || !nameRegex.test(firstNameAttendant.trim())) {
@@ -39,27 +41,25 @@ export const fetchRecordGr: any = createAsyncThunk(
         throw new Error("Необходимо загрузить файл списка.");
       }
 
-      const formData = new FormData();
-      formData.append('firstNameAttendant', firstNameAttendant);
-      formData.append('lastNameAttendant', lastNameAttendant);
-      formData.append('surnameAttendant', surnameAttendant);
-      formData.append('school', school);
-      formData.append('classSchool', classSchool);
-      formData.append('countPeople', countPeople.toString());
-      formData.append('idEvent', idEvent.toString());
-      formData.append('tel', tel);
-      formData.append('file', fileList[0].originFileObj); 
+      const formDataToSend = new FormData();
+      formDataToSend.append('firstNameAttendant', firstNameAttendant);
+      formDataToSend.append('lastNameAttendant', lastNameAttendant);
+      formDataToSend.append('surnameAttendant', surnameAttendant);
+      formDataToSend.append('school', school);
+      formDataToSend.append('class', classSchool);
+      formDataToSend.append('countPeople', countPeople.toString());
+      formDataToSend.append('eventsId', idEvent.toString());
+      formDataToSend.append('phone', tel);
+      formDataToSend.append('fileList', fileList[0].originFileObj);
 
-      // Отправляем данные на сервер
-      const response = await $api.post("/record/createGroupRecord", formData, {
+      const response = await $api.post("/record/createGroupRecord", formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
       });
 
       if (response.status === 200) {
-        message.success("Вы записались!");
-        return thunkAPI.fulfillWithValue("good");
+        return thunkAPI.fulfillWithValue("Вы записались");
       } else if (response.status === 403) {
         throw new Error("Запись прекращена");
       } else {

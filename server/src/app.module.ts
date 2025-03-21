@@ -24,10 +24,10 @@ export class AppModule implements NestModule {
     .forRoutes(
       {path:"/api/events/createEvent", method: RequestMethod.POST},
       {path:"/api/events/deleteEvent", method: RequestMethod.DELETE},
-      // {path:"/api/reviews/createReviews", method: RequestMethod.POST},
       {path:"/api/reviews/deleteReviews", method: RequestMethod.DELETE},
       {path:"/api/spesial/createSpesial", method: RequestMethod.POST},
       {path:"/api/spesial/deleteSpesial", method: RequestMethod.DELETE},
+      {path:"/api/events/updateEvent", method: RequestMethod.PUT},
     )
   }
 }

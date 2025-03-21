@@ -1,7 +1,7 @@
 import { Body, Controller, HttpCode, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-@Controller('/api/auth')
+@Controller('/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
@@ -25,7 +25,7 @@ export class AuthController {
   @HttpCode(200)
   async token(@Body() body){
     const {token} = body
-    const result = await this.authService.token(token)
+    const result = await this.authService.refreshToken(token)
     return result
   }
 }

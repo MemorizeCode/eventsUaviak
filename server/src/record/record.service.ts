@@ -12,22 +12,24 @@ export class RecordService {
 
             const event = await this.prisma.events.findUnique({
                 where: {
-                    id: body.eventsId
+                    id: Number(body.eventsId)
                 }
             })
 
             if (event) {
-                const records = await this.prisma.recordInvididual.findMany({
-                    where: {
-                        eventsId: body.eventsId
-                    }
-                })
-
-                const recordGr = await this.prisma.recordGroup.findMany({
-                    where: {
-                        eventsId: body.eventsId
-                    }
-                })
+                const [records, recordGr] = await Promise.all([
+                    await this.prisma.recordInvididual.findMany({
+                        where: {
+                            eventsId: Number(body.eventsId)
+                        }
+                    }),
+    
+                    await this.prisma.recordGroup.findMany({
+                        where: {
+                            eventsId: Number(body.eventsId)
+                        }
+                    })
+                ])
 
                 const count = records.length + recordGr.reduce((prev, acc) => prev + acc.countPeople, 0)
                 const countNow = 1
@@ -36,12 +38,11 @@ export class RecordService {
 
                 if (count > event.people_count) {
                     throw new HttpException("Запись прекращена. Мест не осталось", HttpStatus.FORBIDDEN)
-
                 }
                 if (countNow + count > event.people_count) {
                     throw new HttpException("Запись прекращена. Мест не осталось", HttpStatus.FORBIDDEN)
                 }
-                console.log(body)
+
                 const newRecord = await this.prisma.recordInvididual.create({
                     data: {
                         firstName: body.firstName,
@@ -50,17 +51,19 @@ export class RecordService {
                         school: body.school,
                         class: body.class,
                         telephoneNumber: String(body.telephoneNumber),
-                        eventsId: body.eventsId
+                        eventsId: Number(body.eventsId)
                     }
                 })
-                return event.title
+                return {message: "Запись успешно создана"}
             }
-            else {
-                throw new HttpException("Мероприятие не найдено", HttpStatus.FORBIDDEN)
-            }
+            throw new HttpException("Мероприятие не найдено", HttpStatus.NOT_FOUND)
         }
         catch (e) {
-            throw new HttpException(e.message || "Ошибка сервера", HttpStatus.FORBIDDEN)
+            console.log(e)
+            if(e instanceof HttpException){
+                throw e
+            }
+            throw new HttpException("Ошибка сервера. Попробуйте позже", HttpStatus.FORBIDDEN)
         }
 
     }
@@ -69,125 +72,144 @@ export class RecordService {
         try {
             const event = await this.prisma.events.findUnique({
                 where: {
-                    id: body.eventsId
+                    id: Number(body.eventsId)
                 }
             })
             if (event) {
-                const records = await this.prisma.recordInvididual.findMany({
-                    where: {
-                        eventsId: body.eventsId
-                    }
-                })
 
-                const recordGr = await this.prisma.recordGroup.findMany({
-                    where: {
-                        eventsId: body.eventsId
-                    }
-                })
+                const [records, recordGr] = await Promise.all([
+                    await this.prisma.recordInvididual.findMany({
+                        where: {
+                            eventsId: Number(body.eventsId)
+                        }
+                    }),
+    
+                    await this.prisma.recordGroup.findMany({
+                        where: {
+                            eventsId: Number(body.eventsId)
+                        }
+                    })
+                ])
 
                 const count = records.length + recordGr.reduce((prev, acc) => prev + acc.countPeople, 0)
-                const countNow = body.countPeople
+
+                const countNow = Number(body.countPeople)
                 console.log("Кол-во записанных: ", count)
                 console.log("Кол-во сколько можно зап: ", event.people_count)
+                console.log("На запись: ", body.countPeople)
 
                 if (count > event.people_count) {
                     throw new HttpException("Запись прекращена. Мест не осталось", HttpStatus.FORBIDDEN)
+
                 }
                 if (countNow + count > event.people_count) {
-                    throw new HttpException("Запись прекращена Мест не осталось", HttpStatus.FORBIDDEN)
+                    throw new HttpException("Запись прекращена. Мест не осталось", HttpStatus.FORBIDDEN)
                 }
 
                 const newRecord = await this.prisma.recordGroup.create({
                     data: {
-                        ...body
+                        firstNameAttendant: body.firstNameAttendant,
+                        lastNameAttendant: body.lastNameAttendant,
+                        SurnameAttendant: body.surnameAttendant,
+                        school: body.school,
+                        class: body.class,
+                        countPeople: Number(body.countPeople),
+                        listPeople: file.filename,
+                        eventsId: Number(body.eventsId),
+                        phone: body.phone
                     }
                 })
                 if (newRecord) {
-                    return newRecord
+                    return {message: "Запись успешно создана"}
                 }
-                throw new HttpException("Не известная ошибка. Проверьте введенные данные", HttpStatus.BAD_REQUEST)
             }
-            throw new HttpException("Нету специальности", HttpStatus.BAD_GATEWAY)
+            throw new HttpException("Мероприятие не найдено", HttpStatus.NOT_FOUND)
         }
         catch (e) {
-            throw new HttpException("Не известная ошибка. Проверьте введенные данные", HttpStatus.FORBIDDEN)
+            console.log(e)
+            if(e instanceof HttpException){
+                throw e
+            }
+            throw new HttpException("Не известная ошибка. Попробуйте позже", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async createFile(file, recordId) {
-        try {
-            const upd = await this.prisma.recordGroup.update({
-                where: {
-                    id: Number(recordId)
-                },
-                data: {
-                    listPeople: file
-                }
-            })
-            if (upd) {
-                return { message: "Успешно!" }
-            }
-        }
-        catch (e) {
-            throw new HttpException("Ошибка при сохранение файла", HttpStatus.BAD_GATEWAY)
-        }
-    }
 
     async getRecords() {
-        const result = []
-        const allRecords = await this.prisma.recordGroup.findMany({
-            select: {
-                id: true,
-                phone: true,
-                school: true,
-                countPeople: true,
-                events: {
+        try{
+
+            const result = []
+            const [recordGroup, allRecordsInv] = await Promise.all([
+    
+                await this.prisma.recordGroup.findMany({
                     select: {
-                        title: true
+                        id: true,
+                        firstNameAttendant: true,
+                        lastNameAttendant: true,
+                        SurnameAttendant: true,
+                        phone: true,
+                        school: true,
+                        countPeople: true,
+                        events: {
+                            select: {
+                                title: true
+                            }
+                        }
                     }
-                }
-            }
-        })
-
-        const allRecordsInv = await this.prisma.recordInvididual.findMany({
-            select: {
-                id: true,
-                telephoneNumber: true,
-                school: true,
-                events: {
+                }),
+        
+                await this.prisma.recordInvididual.findMany({
                     select: {
-                        title: true
+                        id: true,
+                        telephoneNumber: true,
+                        firstName: true,
+                        lastName: true,
+                        surname: true,
+                        school: true,
+                        events: {
+                            select: {
+                                title: true
+                            }
+                        }
                     }
+                })
+            ])
+    
+            for (let key in recordGroup) {
+                const obj = {
+                    id: recordGroup[key].id,
+                    name: `${recordGroup[key].lastNameAttendant} ${recordGroup[key].firstNameAttendant} ${recordGroup[key].SurnameAttendant}`,
+                    phone: recordGroup[key].phone,
+                    school: recordGroup[key].school,
+                    countPeople: recordGroup[key].countPeople,
+                    events: recordGroup[key].events.title,
+                    type: "Групповая"
                 }
+                result.push(obj)
             }
-        })
-
-        for (let key in allRecords) {
-            const obj = {
-                id: allRecords[key].id,
-                phone: allRecords[key].phone,
-                school: allRecords[key].school,
-                countPeople: allRecords[key].countPeople,
-                events: allRecords[key].events.title,
-                type: "Групповая"
+            for (let key in allRecordsInv) {
+                const obj = {
+                    id: allRecordsInv[key].id,
+                    name: `${allRecordsInv[key].lastName} ${allRecordsInv[key].firstName} ${allRecordsInv[key].surname}`,
+                    school: allRecordsInv[key].school,
+                    phone: allRecordsInv[key].telephoneNumber,
+                    countPeople: 1,
+                    events: allRecordsInv[key].events.title,
+                    type: "Инвидидуальная"
+                }
+                result.push(obj)
             }
-            result.push(obj)
-        }
-        for (let key in allRecordsInv) {
-            const obj = {
-                id: allRecordsInv[key].id,
-                school: allRecordsInv[key].school,
-                phone: allRecordsInv[key].telephoneNumber,
-                countPeople: 1,
-                events: allRecordsInv[key].events.title,
-                type: "Инвидидуальная"
+            if (result.length) {
+                return result
             }
-            result.push(obj)
-
+            return { message: "Записей нету" }
         }
-        if (result.length) {
-          return result
+        catch(e){
+            console.log(e)
+            if(e instanceof HttpException){
+                throw e
+            }
+            throw new HttpException("Не известная ошибка. Попробуйте позже", HttpStatus.INTERNAL_SERVER_ERROR)
         }
-        return { message: "Записей нету" }
     }
 }

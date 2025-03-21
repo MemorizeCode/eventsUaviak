@@ -5,22 +5,25 @@ export const eventsSlice = createSlice({
     name:"eventsSlice",
     initialState:{
         eventList: [],
-        isLoading:false
+        isLoading: false,
+        error: null
     },
     reducers:{
     },
     extraReducers: (builder) =>{
         builder.addCase(fetchGetEvents.pending, (state)=>{
             state.isLoading = true
+            state.error = null
         })
-        builder.addCase(fetchGetEvents.fulfilled, (state,payload)=>{
-            // console.log(payload)
+        builder.addCase(fetchGetEvents.fulfilled, (state, action)=>{
             state.isLoading = false
-            state.eventList = payload.payload
+            state.eventList = action.payload
         })
-        // builder.addCase(fetchGetEvents.reject, (state)=>{
-        //     state.isLoading = false
-        // })
+        builder.addCase(fetchGetEvents.rejected, (state, action)=>{
+            state.isLoading = false
+            state.error = action.error.message
+            console.error('Failed to fetch events:', action.error)
+        })
     }
 })
 

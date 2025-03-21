@@ -1,4 +1,4 @@
-import { $api } from '@/app/config/api'
+import  $api  from '@/app/config/api'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { message } from 'antd'
 

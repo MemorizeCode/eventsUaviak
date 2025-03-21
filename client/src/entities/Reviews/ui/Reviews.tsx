@@ -1,13 +1,15 @@
 import { Card, Rate, Typography } from 'antd';
-const Reviews = ({reviews}:any) => {
+import { ReviewsSchema } from '../model/service/fetchGetReviews';
+const Reviews = (props:{reviews:ReviewsSchema}) => {
+    const {id , name, title, stars} = props.reviews
     const { Title, Paragraph } = Typography;
 
     return (
     <Card style={{ width: 300, marginBottom: 16, zIndex: 10 }}>
-        <Title level={4} style={{ marginBottom: 8 }}>{reviews.name}</Title>
-        <Rate defaultValue={reviews.stars} disabled />
-        <Paragraph style={{ marginBottom: 8 }}>{reviews.title}</Paragraph>
-        <small>id: {reviews.id} </small> 
+        <Title level={4} style={{ marginBottom: 8 }}>{name}</Title>
+        <Rate defaultValue={stars} disabled />
+        <Paragraph style={{ marginBottom: 8 }}>{title}</Paragraph>
+        <small>id: {id} </small> 
     </Card>);
 }
 

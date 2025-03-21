@@ -1,10 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { sign, verify } from "jsonwebtoken"
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Injectable()
 export class TokenService {
-    private readonly access = 'accessSS'
-    private readonly refresh = 'refreshSSS'
+    private readonly access: string;
+    private readonly refresh: string;
+
+    constructor(){
+        this.access = process.env.ACCESS_KEY;
+        this.refresh = process.env.REFRESH_KEY;
+
+        if (!this.access || !this.refresh) {
+            throw new Error('Не удается получить ключи');
+        }
+    }
 
     generateAccessToken(payload: any): string {
         return sign(payload, this.access, {

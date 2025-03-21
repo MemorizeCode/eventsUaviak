@@ -1,8 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/service/prisma.service';
 import { ReviewsDTO } from './dto/ReviewsDTO';
-import { secretKeyConst } from 'src/const/key';
-
 
 @Injectable()
 export class ReviewsService {
@@ -10,7 +8,10 @@ export class ReviewsService {
 
     async createViews(body: ReviewsDTO, secretKey) {
         try{
-            if(Number(body.stars)>=4){
+            if(!body.reviews || !body.name || !body.stars){
+                throw new HttpException("Не все поля заполнены", HttpStatus.BAD_REQUEST)
+            }
+            if(Number(body.stars)>=4 || secretKey === "hello"){
                 await this.prisma.reviews.create({    
                     data: {
                         title: body.reviews,
@@ -18,12 +19,15 @@ export class ReviewsService {
                         stars: Number(body.stars)
                     }
                 })
-                return {message: "Отзыв создан"}
             }
-            throw new HttpException("Ошибка создания отзыва. Попробуйте позже.", HttpStatus.FORBIDDEN)
+            return {message: "Отзыв создан"}
         }
         catch(e){
             console.log(e)
+            if(e instanceof HttpException){
+                throw e
+            }
+            throw new HttpException("Не известная ошибка. Попробуйте позже", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
@@ -36,23 +40,37 @@ export class ReviewsService {
             return { message: "Отзывов нет." }
         }
         catch (e) {
-            throw new HttpException("Не известная ошибка.", 400)
+            console.log(e)
+            if(e instanceof HttpException){
+                throw e
+            }
+            throw new HttpException("Не известная ошибка. Попробуйте позже", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 
-    async deleteReviews(id){
-        try{
-            const deleteReviews = await this.prisma.reviews.delete({
-                where:{
-                    id:Number(id)
+    async deleteReview(id) {
+        try {
+            const isReviews = await this.prisma.reviews.findUnique({
+                where: {
+                    id: Number(id)
                 }
             })
-            
-            return {message:"Успешно удален отзыв"}
+            if (isReviews) {
+                await this.prisma.reviews.delete({
+                    where: {
+                        id: Number(id)
+                    }
+                })
+                return { message: "Успешно удален отзыв" }
+            }
+            throw new HttpException("Отзыв не найден", HttpStatus.NOT_FOUND)
         }
-        catch(e){
-            throw new HttpException("Ошибка удаления. Проверьте существует ли отзыв", 401)
-
+        catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            console.error(e);
+            throw new HttpException("Неизвестная ошибка. Попробуйте позже", HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
 

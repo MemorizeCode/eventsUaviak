@@ -1,4 +1,5 @@
-import { $api } from "@/app/config/api";
+
+import $api from "@/app/config/api";
 import { Button, Input, message } from "antd";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";

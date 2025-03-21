@@ -1,0 +1,23 @@
+config:
+  target: "http://localhost:3000/api" 
+  phases:
+    - duration: 10  #Время выполнения
+      arrivalRate: 10  #Количество запросов в секунду
+scenarios:
+    - flow:
+      - get:
+          url: "/events/getEvents"
+      - get:
+          url: "/spesial/getSpesial"
+      - get:
+          url: "/reviews/getReviews"
+      - get:
+          url: "/otchet/spesialVostrebovanie"
+      - get:
+          url: "/otchet/school"
+      - get:
+          url: "/otchet/getPeopleYear"
+      - get:
+          url: "/otchet/getPeopleMouth"
+      - get:
+          url: "/otchet/getPeopleCountSpec"

@@ -7,7 +7,7 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { AdminGuard } from 'src/guard/admin.guard';
 
-@Controller('/api/record')
+@Controller('/record')
 export class RecordController {
   constructor(private readonly recordService: RecordService) {}
 
@@ -20,13 +20,6 @@ export class RecordController {
 
 
   @Post("/createGroupRecord")
-  @HttpCode(200)
-  async createGroupRecord(@Body() body:RecordGroupDTO,@UploadedFile() file: Express.Multer.File){
-    const result = await this.recordService.createGroupRecord(body,file)
-    return result
-  }
-
-  @Post("/createFile")
   @UseInterceptors(FileInterceptor('fileList', {
     storage: diskStorage({
       destination: './uploads'
@@ -36,13 +29,11 @@ export class RecordController {
       }
     })
   }))
-  async uploadFile(@UploadedFile() file: Express.Multer.File, @Body() body) {
-    const {recordId} = body
-    const fileName = file.filename
-    const res = await this.recordService.createFile(fileName,recordId)
-    return res
+  @HttpCode(200)
+  async createGroupRecord(@Body() body:RecordGroupDTO,@UploadedFile() file: Express.Multer.File){
+    const result = await this.recordService.createGroupRecord(body,file)
+    return result
   }
-
 
   @UseGuards(AdminGuard)
   @Get("/getRecords")

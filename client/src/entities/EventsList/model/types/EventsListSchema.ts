@@ -7,8 +7,8 @@ export interface EventSchema {
     id:number
     title: string
     description: string
-    date: Date | any
-    times: Date | any
+    date: Date | unknown
+    times: Date | unknown
     duration: number
     cabinet: number
     people_count: number
@@ -16,5 +16,8 @@ export interface EventSchema {
     spesial: string | number | undefined | null
     prepod: string 
     whoClasses: string
+    eventSpeciality: {
+        title: string
+    }
 }
 

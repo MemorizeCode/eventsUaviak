@@ -1,40 +1,47 @@
-import axios from "axios";
-// alert(import.meta.env.VITE_API_BACKEND)
-export const $api = axios.create({
-    baseURL:import.meta.env.VITE_API_BACKEND,
-    headers:{
-        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
-    }
-})
+import axios, { AxiosResponse } from "axios";
 
-$api.interceptors.request.use((config)=>{
-    config.headers.Authorization = "Bearer " + localStorage.getItem('accessToken');
-    return config
-})
+const $api = axios.create({
+  baseURL: 'http://localhost:3000/api',
+  headers:{
+      "Content-Type": "application/json",
+  },
+});
 
-$api.interceptors.response.use((config)=>{
-    return config
-}, async (err)=>{
-    const originalReq = err.config
-    if(err.response.status === 401 && err.config && !err.config._isRetry){
-        originalReq._isRetry = true
-        try{
-            const response = await axios.post("http://localhost:5000/api/auth/token", {
-                token: localStorage.getItem("refreshToken")
-            })
-            if(response.status === 200){
-                localStorage.setItem("accessToken", response.data.accessToken)
-                localStorage.setItem("refreshToken", response.data.refreshToken)
-            }
-            else{
-                //
-                console.log("ne good")
-            }
-            return $api.request(originalReq)
+$api.interceptors.request.use((config) => {
+  config.headers.Authorization = "Bearer " + localStorage.getItem('accessToken');
+  return config;
+});
+
+$api.interceptors.response.use(
+  (config) => {
+    return config;
+  },
+  async (err) => {
+    const originalRequest = err.config;
+
+    if ((err.response.status === 403 || err.response.status === 401) && err.config && !err.config._isRetry) {
+      originalRequest._isRetry = true;
+      try {
+        const response = await axios.post<AxiosResponse, any>(
+          `${import.meta.env.VITE_API_BACKEND}/auth/token`,
+          {
+            token: localStorage.getItem('refreshToken'),
+          }
+        );
+        if (response.status === 200) {
+          console.log("Генерация токенов или проверка user успешна");
+        } else {
+          console.log("Ошибка авторизации");
         }
-        catch(e){
-            console.log("config")
-        }
+        localStorage.setItem('accessToken', response?.data.accessToken);
+        localStorage.setItem('refreshToken', response?.data.refreshToken); //Тут надо как-бы в куки, но мне проще дебажить так
+        return await $api.request(originalRequest);
+      } catch (e) {
+        console.log("Сработал config");
+      }
     }
-    return err.response
-})
+    return err.response;
+  }
+);
+
+export default $api;

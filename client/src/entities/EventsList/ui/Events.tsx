@@ -4,20 +4,21 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGetEvents } from "../model/service/fetchEventList";
 import ModalGroup from "@/widget/Modal/ModalRecordGroup/ModalGroup";
-const Events = () => {
+import { Flex } from "antd";
+import { RootState } from "@/app/providers/store/store";
 
+const Events = () => {
     const dispatch = useDispatch()
-    const events = useSelector((state: any) => state.events.eventList)
-    const isLoading = useSelector((state: any) => state.events.isLoading)
+    const events = useSelector((state: RootState) => state.events.eventList)
+    const isLoading = useSelector((state: RootState) => state.events.isLoading)
+
     useEffect(() => {
         dispatch(fetchGetEvents())
     }, [])
 
     const [modalRecord, setModalRecord] = useState(false)
     const [currentEventId, setCurrentEventId] = useState<number | null>(null)
-
     const [modalGroup, setModalGroup] = useState(false)
-
 
     const openModal = (id: number) => {
         setCurrentEventId(id)
@@ -28,7 +29,7 @@ const Events = () => {
         setModalRecord(false)
     }
 
-    const openModalGroup = (id: any) => {
+    const openModalGroup = (id: number) => {
         setCurrentEventId(id)
         setModalGroup(true)
     }
@@ -36,15 +37,18 @@ const Events = () => {
     const closeModalGroup = () => {
         setModalGroup(false)
     }
+
     return <>
-        {
-            isLoading ? <h2>Загрузка...</h2> :
-                events && events.length ? events?.map((e: any) => {
-                    return (<Event event={e.event} key={e.event.id} openModal={() => openModal(e.event.id)} openModalGroup={() => openModalGroup(e.event.id)} mest={e.ostalosMest} />)
-                }) : <h2>Мероприятий нет</h2>
-        }
+        <Flex gap="middle" wrap="wrap" flex="1">
+            {
+                isLoading ? <h2>Загрузка...</h2> :
+                    Array.isArray(events) && events?.length ? events?.map((e: any) => {
+                        return (<Event event={e.event} key={e.event.id} openModal={() => openModal(e.event.id)} openModalGroup={() => openModalGroup(e.event.id)} mest={e.ostalosMest} />)
+                    }) : <h2>Мероприятий нет</h2>
+            }
+        </Flex>
         <ModalRecord isOpen={modalRecord} closeModal={closeModal} idEvent={currentEventId} />
-        <ModalGroup isOpen={modalGroup} closeModal={closeModalGroup} idEvent={currentEventId} />
+        <ModalGroup isOpen={modalGroup} closeModal={closeModalGroup} idEvent={currentEventId?.toString() || ''} />
     </>;
 }
 

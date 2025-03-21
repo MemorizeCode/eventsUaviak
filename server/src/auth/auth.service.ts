@@ -1,86 +1,152 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+    BadRequestException,
+    ConflictException,
+    HttpException,
+    Injectable,
+    InternalServerErrorException,
+    Logger,
+    UnauthorizedException
+} from '@nestjs/common';
 import { PrismaService } from 'src/service/prisma.service';
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcryptjs';
 import { TokenService } from 'src/service/token.service';
-import { log } from 'console';
+
 @Injectable()
 export class AuthService {
-    constructor(private readonly prisma: PrismaService, private readonly jwt: TokenService){}
+    private readonly logger = new Logger(AuthService.name);
 
-    async login(login,password){
-        if(!login.length){
-            throw new HttpException("Логин пустой", HttpStatus.UNAUTHORIZED)
-        }
-        else if(!password.length){
-            throw new HttpException("Пароль пустой", HttpStatus.UNAUTHORIZED)
-        }
-        
-        const user = await this.prisma.user.findUnique({
-            where:{
-                login:login
-            }
-        })
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly jwt: TokenService
+    ) { }
 
-        if(user){
-            const isMatch = await bcrypt.compare(password, user.password)
-            if(!isMatch){
-                throw new HttpException("Пароли не верные", HttpStatus.UNAUTHORIZED)
+    async login(login: string, password: string) {
+        try {
+            if (!login || typeof login !== 'string') {
+                throw new BadRequestException('Логин обязателен');
             }
-            const data = { 
-                id: user.id,
-                login:user.login,
-            }
-            const accessToken = await this.jwt.generateAccessToken(data)
-            const refreshToken = await this.jwt.generateRefreshToken(data)
-            return {message:"Вы вошли", accessToken: accessToken, refreshToken: refreshToken, role: user.role}
-        }
-        throw new HttpException("Юзер не найден", HttpStatus.BAD_REQUEST);
-    }
 
-    async register(login,password){
-        if(!login.length){
-            return {message:"Логин пустой"}
-        }
-        else if(!password.length){
-            return {message:"Пароль пустой"}
-        }
-        const user = await this.prisma.user.findUnique({
-            where:{
-                login:login
+            if (!password || typeof password !== 'string') {
+                throw new BadRequestException('Пароль обязателен');
             }
-        })
-        if(user){
-            throw new HttpException("Админ уже существует", HttpStatus.BAD_REQUEST)
-        }
-        const hashPassword = await bcrypt.hash(password, 3)
-        const newUser = await this.prisma.user.create({
-            data:{
-                login:login,
-                password:hashPassword
-            }
-        })
-        return {message:"Вы создали аккаунт", data: newUser}
-    }
 
-
-    async token(token){
-        const data = await this.jwt.verifyRefreshToken(token)
-        if(data){
-            const id = data.id
-            //
             const user = await this.prisma.user.findUnique({
-                where:{
-                    id: id
-                }
-            })
-            const newData = {
-                id: id,
-                login: data.login
+                where: { login: login.trim() }
+            });
+
+            if (!user) {
+                throw new UnauthorizedException('Неверный логин');
             }
-            const accessToken = await this.jwt.generateAccessToken(newData)
-            const refreshToken = await this.jwt.generateRefreshToken(newData)
-            return {message:"Вы вошли", accessToken: accessToken, refreshToken: refreshToken, role: user.role}
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                throw new UnauthorizedException('Неверный пароль');
+            }
+
+            const payload = { id: user.id, login: user.login };
+            const [accessToken, refreshToken] = await Promise.all([
+                this.jwt.generateAccessToken(payload),
+                this.jwt.generateRefreshToken(payload)
+            ]);
+
+            return {
+                message: 'Авторизация успешна',
+                accessToken,
+                refreshToken,
+                role: user.role
+            };
+        } catch (e) {
+            this.logger.error(`LOGIN ERROR: ${e.message} | ${e.stack}`);
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException('Ошибка при авторизации');
         }
-        throw new HttpException("Session", HttpStatus.FORBIDDEN)
+    }
+
+    async register(login: string, password: string) {
+        try {
+            if (!login?.trim()) {
+                throw new BadRequestException('Логин обязателен');
+            }
+
+            if (!password?.trim()) {
+                throw new BadRequestException('Пароль обязателен');
+            }
+
+            if (password.length < 6) {
+                throw new BadRequestException('Пароль должен быть не менее 6 символов');
+            }
+
+            const existingUser = await this.prisma.user.findUnique({
+                where: { login: login.trim() }
+            });
+
+            if (existingUser) {
+                throw new ConflictException('Пользователь с таким логином уже существует');
+            }
+
+            const hashPassword = await bcrypt.hash(password, 10);
+
+            const newUser = await this.prisma.user.create({
+                data: {
+                    login: login.trim(),
+                    password: hashPassword,
+                    role: 'USER' 
+                }
+            });
+
+            return {
+                message: 'Аккаунт успешно создан',
+                data: {
+                    id: newUser.id,
+                    login: newUser.login,
+                    role: newUser.role
+                }
+            };
+        } catch (e) {
+            this.logger.error(`REGISTER ERROR: ${e.message} | ${e.stack}`);
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException('Ошибка при регистрации');
+        }
+    }
+
+    async refreshToken(refreshToken: string) {
+        try {
+            if (!refreshToken) {
+                throw new UnauthorizedException('Токен обновления обязателен');
+            }
+
+            const payload = await this.jwt.verifyRefreshToken(refreshToken);
+
+            const user = await this.prisma.user.findUnique({
+                where: { id: payload.id }
+            });
+
+            if (!user) {
+                throw new UnauthorizedException('Пользователь не найден');
+            }
+
+            const newPayload = { id: user.id, login: user.login };
+            const [accessToken, newRefreshToken] = await Promise.all([
+                this.jwt.generateAccessToken(newPayload),
+                this.jwt.generateRefreshToken(newPayload)
+            ]);
+
+            return {
+                message: 'Токены обновлены',
+                accessToken,
+                refreshToken: newRefreshToken,
+                role: user.role
+            };
+        } catch (e) {
+            this.logger.error(`Token refresh error: ${e.message}`);
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new InternalServerErrorException('Ошибка при обновлении токена');
+        }
     }
 }

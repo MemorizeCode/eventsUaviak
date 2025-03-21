@@ -20,12 +20,10 @@ export const authSlice = createSlice({
         console.log("penging auth")
     })
     builder.addCase(fetchAuthUser.fulfilled, (action)=>{
-      console.log(action)
         console.log('fulfilled auth')
     })
     builder.addCase(fetchAuthUser.rejected, ( payload)=>{
-      // 
-      console.log(payload)
+      console.log('rejected auth')
     })
   }
 })

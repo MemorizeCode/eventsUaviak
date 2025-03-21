@@ -2,21 +2,21 @@ import { Body, Controller, Get, HttpCode, Query } from '@nestjs/common';
 import { OtchetService } from './otchet.service';
 import { SchoolDTO } from './dto/SchoolDTO';
 
-@Controller('/api/otchet')
+@Controller('/otchet')
 export class OtchetController {
   constructor(private readonly otchetService: OtchetService) {}
 
   @Get("/spesialVostrebovanie")
   @HttpCode(200)
   async spesial() {
-      const result = await this.otchetService.getSpesialVost()
+      const result = await this.otchetService.getEventsStatistics()
       return result
   }
 
   @Get("/school")
   @HttpCode(200)
-  async school(@Body() body:SchoolDTO){
-    const result = await this.otchetService.school(body)
+  async school(){
+    const result = await this.otchetService.school()
     return result
   }
 
