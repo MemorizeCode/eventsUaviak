@@ -15,6 +15,7 @@ import { DeleteEventsAsync } from "./ui/DeleteEvent"
 import { EditEventAsync } from "./ui/EditEvents"
 import { RecordsEventsAsync } from "./ui/RecordsEvent"
 import { statsEventSliceReducer } from "./models/slice/adminSlice"
+import { EditSpesialAsync } from "./ui/EditSpesial"
 export {
     fetchAllSpecial,
     allSpecialSliceReducer,
@@ -32,5 +33,6 @@ export {
     DeleteEventsAsync,
     EditEventAsync,
     RecordsEventsAsync,
-    statsEventSliceReducer
+    statsEventSliceReducer,
+    EditSpesialAsync
 }

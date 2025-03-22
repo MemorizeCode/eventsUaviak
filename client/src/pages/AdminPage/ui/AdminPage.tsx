@@ -14,7 +14,7 @@
 //     const [vostrSpecData, setvostrSpecData] = useState('')
 
 import { AppDispatch } from "@/app/providers/store/store";
-import { CreateEventAsync, DeleteEventsAsync, DeleteReviewsAsync, EditEventAsync, fetchAllSpecial, RecordsEventsAsync, StatsEventAsync } from "@/features/Admin";
+import { CreateEventAsync, DeleteEventsAsync, DeleteReviewsAsync, EditEventAsync, EditSpesialAsync, fetchAllSpecial, RecordsEventsAsync, StatsEventAsync } from "@/features/Admin";
 
 
 import { Flex } from "antd";
@@ -301,6 +301,11 @@ const AdminPage = () => {
             <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
                 <Suspense fallback={<div>Loading delete reviews...</div>}>
                     <DeleteReviewsAsync />
+                </Suspense>
+            </Flex>
+            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
+                <Suspense fallback={<div>Loading edit special...</div>}>
+                    <EditSpesialAsync/>
                 </Suspense>
             </Flex>
             <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>

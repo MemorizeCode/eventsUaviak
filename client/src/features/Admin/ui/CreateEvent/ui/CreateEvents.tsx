@@ -1,8 +1,8 @@
 import { AppDispatch, RootState } from "@/app/providers/store/store";
-import { fetchAllSpecial, fetchCreateEvents } from "@/features/Admin";
+import { fetchCreateEvents } from "@/features/Admin";
 import { CreateEventError, ValidationError } from "@/features/Admin/models/service/fetchCreateEvent";
 import { Card, Input, Button, Space, Typography, Select, message } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const { Title } = Typography;
@@ -151,6 +151,7 @@ const CreateEvent = () => {
                     onChange={value => handleInputChange('idSpecEvent', value)}
                     value={formState.idSpecEvent}
                     style={{ width: "100%" }}
+                    allowClear
                 >
                     {allSpecial?.map((item: any) => (
                         <Select.Option key={item.id} value={item.id}>

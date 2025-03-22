@@ -65,8 +65,9 @@ const RecordsEvents = () => {
         <Card>
             <Title level={2}>Записи на мероприятия</Title>
             {message && <h2>{message}</h2>}
+            
             {records && Array.isArray(records) && records.length > 0 &&
-                <Table columns={columns} dataSource={records} />
+                <Table rowKey="id" columns={columns} dataSource={records} />
             }
         </Card>
     </>);
