@@ -13,11 +13,12 @@
 //     const [idSpec, setIdSpec] = useState('')
 //     const [vostrSpecData, setvostrSpecData] = useState('')
 
+import $api from "@/app/config/api";
 import { AppDispatch } from "@/app/providers/store/store";
 import { CreateEventAsync, DeleteEventsAsync, DeleteReviewsAsync, EditEventAsync, EditSpesialAsync, fetchAllSpecial, RecordsEventsAsync, StatsEventAsync } from "@/features/Admin";
 
 
-import { Flex } from "antd";
+import { Button, Flex } from "antd";
 import { Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -283,8 +284,14 @@ const AdminPage = () => {
         dispatch(fetchAllSpecial())
     }, [dispatch])
 
+    async function loadSpecial() {
+        const response = await $api.post('/loadSpecial')
+        console.log(response)
+    }
+    
     return (
         <>
+            <Button onClick={loadSpecial}>load spe</Button>
             <Flex wrap="wrap" gap="middle" flex={1}>
                 <Suspense fallback={<div>Loading create events...</div>}>
                     <CreateEventAsync />
@@ -305,7 +312,7 @@ const AdminPage = () => {
             </Flex>
             <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
                 <Suspense fallback={<div>Loading edit special...</div>}>
-                    <EditSpesialAsync/>
+                    <EditSpesialAsync />
                 </Suspense>
             </Flex>
             <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
