@@ -1,4 +1,4 @@
-import Card from "antd/es/card/Card";
+import Card from "antd/es/card";
 import styles from "./Login.module.css"
 import AuthForm from "@/features/AuthUser/ui/AuthForm";
 const LoginPage = () => {

@@ -8,8 +8,10 @@ import Space from 'antd/es/space';
 import Typography from 'antd/es/typography';
 import Select from 'antd/es/select';
 import message from 'antd/es/message';
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { createSelector } from "@reduxjs/toolkit";
+import { Spesial } from "@/features/Admin/models/service/fetchAllSpecial";
 
 const { Title } = Typography;
 
@@ -40,7 +42,20 @@ const CreateEvent = () => {
         idSpecEvent: null,
     });
 
-    const allSpecial = useSelector((state: RootState) => state?.allSpecial?.allSpecial);
+    const selectMemoizedAllSpecial = createSelector(
+        (state: RootState) => state.allSpecial.allSpecial,
+        (special) => special
+    );
+    const allSpecial = useSelector(selectMemoizedAllSpecial);
+
+    const specialOptions = useMemo(() => 
+        allSpecial.map((special: Spesial | unknown) => (
+            <Select.Option key={(special as Spesial).id} value={(special as Spesial).id}>
+                {(special as Spesial).title}
+            </Select.Option>
+        )),
+    [allSpecial]);
+
     const dispatch = useDispatch<AppDispatch>();
 
     const handleInputChange = (field: keyof EventFormState, value: string | number | null) => {
@@ -159,11 +174,7 @@ const CreateEvent = () => {
                     style={{ width: "100%" }}
                     allowClear
                 >
-                    {allSpecial?.map((item: any) => (
-                        <Select.Option key={item.id} value={item.id}>
-                            {item.title}
-                        </Select.Option>
-                    ))}
+                    {specialOptions}
                 </Select>
                 <Button
                     type='primary'

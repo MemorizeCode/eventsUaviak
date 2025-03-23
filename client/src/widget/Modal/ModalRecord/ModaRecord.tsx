@@ -1,4 +1,3 @@
-
 // import styles from "./ModalRecord.module.css"
 import { memo, useMemo } from "react";
 import Button from "antd/es/button";
@@ -9,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { fetchRecord, RecordError } from "@/features/Record/model/service/fetchRecord";
 import { AppDispatch } from "@/app/providers/store/store";
 import { useCallback } from "react";
-import { message } from "antd";
+import message from "antd/es/message";
 
 
 interface ModalRecordProps {

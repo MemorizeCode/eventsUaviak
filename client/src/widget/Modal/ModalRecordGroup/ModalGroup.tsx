@@ -3,7 +3,7 @@ import Form from "antd/es/form";
 import Input from "antd/es/input";
 import Button from "antd/es/button";
 import Upload from "antd/es/upload";
-import { message } from "antd";
+import message from "antd/es/message";
 import { memo, useState } from "react";
 import { useDispatch } from 'react-redux';
 import { fetchRecordGr, RecordGroupError } from '@/features/RecordGroup/model/service/fetchRecord';

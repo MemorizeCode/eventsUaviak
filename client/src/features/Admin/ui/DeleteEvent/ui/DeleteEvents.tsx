@@ -1,4 +1,3 @@
-
 import { AppDispatch } from "@/app/providers/store/store";
 import { DeleteEventError, fetchDeleteEvent } from "@/features/Admin/models/service/fetchDeleteEvent";
 
@@ -9,12 +8,11 @@ import Card from "antd/es/card";
 import Input from "antd/es/input";
 import Space from "antd/es/space";
 import Typography from "antd/es/typography";
-import { message } from "antd";
+import message from "antd/es/message";
 
+const { Title } = Typography;
 
 const DeleteEvents = memo(() => {
-    const { Title } = Typography;
-
     const MemoizedTitle = useMemo(() => <Title level={2}>Удалить мероприятие</Title>, []);
 
     const dispatch = useDispatch<AppDispatch>()

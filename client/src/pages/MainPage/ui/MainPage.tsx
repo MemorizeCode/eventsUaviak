@@ -1,5 +1,5 @@
-
-import { Flex ,Typography} from "antd";
+import Flex from "antd/es/flex";
+import Typography from "antd/es/typography";
 import Events from "@/entities/EventsList/ui/Events";
 
 const MainPage = () => {

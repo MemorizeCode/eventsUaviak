@@ -6,8 +6,10 @@ import Typography from "antd/es/typography";
 import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 // import { Button } from "antd";
+
+const { Title } = Typography;
+
 const RecordsEvents = memo(() => {
-    const { Title } = Typography;
     const dispatch = useDispatch()
     const records = useSelector((state: RootState) => state?.recordsEvents?.records)
     // const message = useSelector((state: RootState) => state?.recordsEvents?.message)

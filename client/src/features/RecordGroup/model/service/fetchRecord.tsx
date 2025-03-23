@@ -1,6 +1,6 @@
 import $api from "@/app/config/api";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { UploadFile } from "antd";
+import { UploadFile } from "antd/es/upload";
 
 
 

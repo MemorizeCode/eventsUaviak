@@ -1,12 +1,17 @@
-import { Form, Input, Rate, Button, Typography, message } from "antd";
+import Form from "antd/es/form";
+import Input from "antd/es/input";
+import Rate from "antd/es/rate";
+import Button from "antd/es/button";
+import Typography from "antd/es/typography";
+import message from "antd/es/message";
 import { useState, useMemo, memo } from "react";
 import { useDispatch } from "react-redux";
 import { fetchNewReviews, IReviewResponse } from "../model/services/fetchNewReviews";
 import { AppDispatch } from "@/app/providers/store/store";
 
-const Reviews = memo(() => {
-    const { Paragraph } = Typography
+const { Paragraph } = Typography;
 
+const Reviews = memo(() => {
     const [rating, setRaiting] = useState<number>(0)
     const dispatch = useDispatch<AppDispatch>()
     const [form] = Form.useForm();

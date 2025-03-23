@@ -1,20 +1,36 @@
 import { AppDispatch, RootState } from "@/app/providers/store/store";
 import { fetchAllSpecial, Spesial } from "@/features/Admin/models/service/fetchAllSpecial";
 import { DeleteSpesialError, fetchDeleteSpesial } from "@/features/Admin/models/service/fetchDeleteSpesial";
-import { memo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Button from "antd/es/button";
 import Card from "antd/es/card";
 import Space from "antd/es/space";
 import Typography from "antd/es/typography";
-import { message } from "antd";
+import message from "antd/es/message";
 import Select from "antd/es/select";
+import { createSelector } from "@reduxjs/toolkit";
 
+const { Title } = Typography;
 
 const DeleteSpesial = memo(() => {
-    const { Title } = Typography;
     const [id, setId] = useState<string | number | null>("")
-    const allSpecial = useSelector((state: RootState) => state.allSpecial.allSpecial)
+    
+    const selectMemoizedAllSpecial = createSelector(
+        (state: RootState) => state.allSpecial.allSpecial,
+        (special) => special
+    );
+    const allSpecial = useSelector(selectMemoizedAllSpecial);
+
+    const specialOptions = useMemo(() => 
+        allSpecial.map((special: Spesial | unknown) => (
+            <Select.Option key={(special as Spesial).id} value={(special as Spesial).id}>
+                {(special as Spesial).title}
+            </Select.Option>
+        )),
+    [allSpecial]);  
+
+
     const dispatch = useDispatch<AppDispatch>()
     const [selectSpecial, setSelectedSpecial] = useState(null)
 
@@ -54,11 +70,7 @@ const DeleteSpesial = memo(() => {
                     style={{ width: "100%" }}
                     allowClear 
                 >
-                    {allSpecial.map((special: Spesial | unknown) => (
-                        <Select.Option key={(special as Spesial).id} value={(special as Spesial).id}>
-                            {(special as Spesial).title}
-                        </Select.Option>
-                    ))}
+                    {specialOptions}
                 </Select>
                 <Button type="primary" style={{ background: "red" }} onClick={deleteSpesial}>Удалить</Button>
             </Space>

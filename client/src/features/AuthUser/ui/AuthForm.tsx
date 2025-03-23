@@ -1,10 +1,11 @@
-import Card from "antd/es/card/Card";
-import Input from "antd/es/input/Input";
-import Button from "antd/es/button/button";
+import Card from "antd/es/card";
+import Input from "antd/es/input";
+import Button from "antd/es/button";
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import  message  from "antd/es/message";
+import message from "antd/es/message";
 import { AuthUserError, fetchAuthUser } from "../models/service/fetchAuthUser";
 import { AppDispatch } from "@/app/providers/store/store";
 

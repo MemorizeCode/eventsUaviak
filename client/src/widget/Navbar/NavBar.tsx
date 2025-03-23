@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Layout, Menu, Button, Drawer, Row, Col } from "antd";
+import Layout from "antd/es/layout";
+import Menu from "antd/es/menu";
+import Button from "antd/es/button";
+import Drawer from "antd/es/drawer";
+import Row from "antd/es/row";
+import Col from "antd/es/col";
 import { MenuOutlined } from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";

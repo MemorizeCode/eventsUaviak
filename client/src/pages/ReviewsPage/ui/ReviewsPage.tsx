@@ -2,10 +2,10 @@ import { AppDispatch, RootState } from '@/app/providers/store/store';
 import { fetchGetReviews, ReviewsSchema } from '@/entities/Reviews/model/service/fetchGetReviews';
 import Reviews from '@/entities/Reviews/ui/Reviews';
 import { ReviewsForm } from '@/features/Reviews';
-import { Flex, Typography } from "antd";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import Flex from "antd/es/flex";
+import Typography from "antd/es/typography";
 
 
 const ReviewsPage = () => {
