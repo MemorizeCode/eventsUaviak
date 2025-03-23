@@ -1,8 +1,7 @@
 import  $api  from "@/app/config/api";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-interface FetchGetReviewsResponse {
-    message: string
+export interface FetchGetReviewsResponse {
     data: ReviewsSchema[]
 }
 
@@ -20,7 +19,7 @@ interface FetchGetReviewsError {
 
 export const fetchGetReviews = createAsyncThunk<FetchGetReviewsResponse, void, { rejectValue: FetchGetReviewsError }>("fetchGetReviews", 
     async ()=> {
-        const response = await $api.get('/reviews/getReviews')
+        const response = await $api.get<FetchGetReviewsResponse>('/reviews/getReviews')
         return response.data
     }
 )

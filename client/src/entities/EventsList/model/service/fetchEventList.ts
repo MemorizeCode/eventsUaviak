@@ -12,7 +12,7 @@ export interface EventSchema {
 export const fetchGetEvents:any = createAsyncThunk("fetchGetEvents", async () => {
     try {
         const response = await $api.get("/events/getEvents")
-        if(Array.isArray(response.data)){
+        if(response.status === 200){
             return response.data
         }
         return

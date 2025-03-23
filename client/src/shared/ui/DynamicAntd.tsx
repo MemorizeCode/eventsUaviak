@@ -1,8 +1,10 @@
 import React, { Suspense } from 'react';
 
 interface DynamicAntdProps {
+  // @ts-ignore
   component: () => Promise<any>;
   fallback?: React.ReactNode;
+  // @ts-ignore
   [key: string]: any;
 }
 

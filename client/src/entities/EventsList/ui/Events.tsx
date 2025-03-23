@@ -4,8 +4,8 @@ import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGetEvents } from "../model/service/fetchEventList";
 import ModalGroup from "@/widget/Modal/ModalRecordGroup/ModalGroup";
-import { RootState } from "@/app/providers/store/store";
 import Flex from "antd/es/flex";
+import { RootState } from "@/app/providers/store/store";
 
 const Events = memo(() => {
     const dispatch = useDispatch()

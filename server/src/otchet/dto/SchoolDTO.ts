@@ -1,5 +1,5 @@
 export interface SchoolDTO {
-    type: filterType
+  type: filterType;
 }
 
-type filterType = "month" | "year"
+type filterType = 'month' | 'year';

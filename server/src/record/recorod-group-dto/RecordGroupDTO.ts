@@ -7,5 +7,5 @@ export interface RecordGroupDTO {
   countPeople: number;
   listPeople: string;
   eventsId: number;
-  phone: string
+  phone: string;
 }

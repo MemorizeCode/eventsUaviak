@@ -42,7 +42,7 @@ export const ModalRecord = memo(({ isOpen, closeModal, idEvent }: ModalRecordPro
       } else {
         message.error(payload.message);
       }
-    } catch (error) {
+    } catch (_) {
       message.error("Ошибка при заполнении формы.");
     }
   }, [dispatch, form, idEvent, closeModal]);

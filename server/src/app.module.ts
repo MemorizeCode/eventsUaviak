@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthMiddleware } from './middleware/auth.middleware';
@@ -13,22 +18,30 @@ import { RecordModule } from './record/record.module';
 import { SpesialModule } from './spesial/spesial.module';
 
 @Module({
-  imports: [AuthModule, EventsModule, ReviewsModule, MaxSecretModule, OtchetModule, RecordModule, SpesialModule],
+  imports: [
+    AuthModule,
+    EventsModule,
+    ReviewsModule,
+    MaxSecretModule,
+    OtchetModule,
+    RecordModule,
+    SpesialModule,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService, TokenService],
-  exports: [PrismaService, TokenService]
+  exports: [PrismaService, TokenService],
 })
 export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer){
-    consumer.apply(AuthMiddleware)
-    .forRoutes(
-      {path:"/api/events/createEvent", method: RequestMethod.POST},
-      {path:"/api/events/deleteEvent", method: RequestMethod.DELETE},
-      {path:"/api/reviews/deleteReviews", method: RequestMethod.DELETE},
-      {path:"/api/spesial/createSpesial", method: RequestMethod.POST},
-      {path:"/api/spesial/deleteSpesial", method: RequestMethod.DELETE},
-      {path:"/api/events/updateEvent", method: RequestMethod.PUT},
-    )
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes(
+        { path: '/api/events/createEvent', method: RequestMethod.POST },
+        { path: '/api/events/deleteEvent', method: RequestMethod.DELETE },
+        { path: '/api/reviews/deleteReviews', method: RequestMethod.DELETE },
+        { path: '/api/spesial/createSpesial', method: RequestMethod.POST },
+        { path: '/api/spesial/deleteSpesial', method: RequestMethod.DELETE },
+        { path: '/api/events/updateEvent', method: RequestMethod.PUT },
+      );
   }
 }
- 

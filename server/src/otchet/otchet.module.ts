@@ -6,6 +6,6 @@ import { PrismaService } from 'src/service/prisma.service';
 @Module({
   controllers: [OtchetController],
   providers: [OtchetService, PrismaService],
-  exports: [PrismaService]
+  exports: [PrismaService],
 })
 export class OtchetModule {}

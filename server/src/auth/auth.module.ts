@@ -7,6 +7,6 @@ import { TokenService } from 'src/service/token.service';
 @Module({
   controllers: [AuthController],
   providers: [AuthService, PrismaService, TokenService],
-  exports: [PrismaService, TokenService]
+  exports: [PrismaService, TokenService],
 })
 export class AuthModule {}

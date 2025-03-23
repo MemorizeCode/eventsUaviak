@@ -6,7 +6,7 @@ import { TokenService } from 'src/service/token.service';
 
 @Module({
   controllers: [EventsController],
-  providers: [EventsService,PrismaService,TokenService],
-  exports: [PrismaService,TokenService]
+  providers: [EventsService, PrismaService, TokenService],
+  exports: [PrismaService, TokenService],
 })
 export class EventsModule {}

@@ -1,22 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { fetchGetReviews } from "../service/fetchGetReviews";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { fetchGetReviews, FetchGetReviewsResponse, ReviewsSchema } from "../service/fetchGetReviews";
+
+interface ReviewsState {
+    reviewsList: ReviewsSchema[]
+}
+
+const initialState: ReviewsState = {
+    reviewsList: []
+}
 
 export const reviewsSlice = createSlice({
     name:"reviewsSlice",
-    initialState:{
-        reviewsList: []
-    },
+    initialState:initialState,
     reducers:{
 
     },
     extraReducers: (builder) =>{
         builder.addCase(fetchGetReviews.pending, ()=>{
-            console.log("pending")
+            console.log("Загрузка отзывов...");
         })
-        builder.addCase(fetchGetReviews.fulfilled, (state, payload: any)=>{
-            state.reviewsList = payload.payload
+        builder.addCase(fetchGetReviews.fulfilled, (state, action:PayloadAction<FetchGetReviewsResponse>)=>{
+            state.reviewsList = action.payload.data
         })
-        builder.addCase(fetchGetReviews.rejected, ()=>{
+        builder.addCase(fetchGetReviews.rejected, () => {
 
         })
     }

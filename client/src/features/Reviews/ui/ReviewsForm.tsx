@@ -2,14 +2,11 @@ import Form from "antd/es/form";
 import Input from "antd/es/input";
 import Rate from "antd/es/rate";
 import Button from "antd/es/button";
-import Typography from "antd/es/typography";
 import message from "antd/es/message";
 import { useState, useMemo, memo } from "react";
 import { useDispatch } from "react-redux";
 import { fetchNewReviews, IReviewResponse } from "../model/services/fetchNewReviews";
 import { AppDispatch } from "@/app/providers/store/store";
-
-const { Paragraph } = Typography;
 
 const Reviews = memo(() => {
     const [rating, setRaiting] = useState<number>(0)
@@ -19,15 +16,15 @@ const Reviews = memo(() => {
     const memoizedInput = useMemo(() => <Input />, []);
 
     async function onFinish(e: { name: string, text: string, stars: number }) {
-        const response = await dispatch(fetchNewReviews({name: e.name, reviews: e.text, stars: e.stars}))
+        const response = await dispatch(fetchNewReviews({ name: e.name, reviews: e.text, stars: e.stars }))
         const payload = response.payload as IReviewResponse
-        if(response?.meta?.requestStatus === "fulfilled"){
+        if (response?.meta?.requestStatus === "fulfilled") {
             message.success(payload?.message)
             form?.resetFields()
             setRaiting(0)
             // dispatch(fetchGetReviews())
         }
-        else{
+        else {
             message.error(payload?.message)
         }
     }
@@ -53,14 +50,11 @@ const Reviews = memo(() => {
                 <Input.TextArea rows={4} />
             </Form.Item>
             <Form.Item name="stars" label="Оценка" rules={[{ required: true, message: "Пожалуйста, поставьте оценку!" }]}>
-                <Rate
-                    defaultValue={rating}
-                    onChange={setRaiting}
-                    allowClear={false}
-                />
-                {Number(rating) !== 0 && (
-                    <Paragraph type="secondary" style={{ marginTop: 4 }}>{rating} из 5</Paragraph>
-                )}
+                    <Rate
+                        defaultValue={rating}
+                        onChange={setRaiting}
+                        allowClear={false}
+                    />
             </Form.Item>
             <Form.Item>
                 <Button type="primary" htmlType="submit" style={{ background: "#456B92" }}>

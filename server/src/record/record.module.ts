@@ -6,7 +6,7 @@ import { TokenService } from 'src/service/token.service';
 
 @Module({
   controllers: [RecordController],
-  providers: [RecordService, PrismaService,TokenService],
-  exports: [PrismaService,TokenService]
+  providers: [RecordService, PrismaService, TokenService],
+  exports: [PrismaService, TokenService],
 })
 export class RecordModule {}

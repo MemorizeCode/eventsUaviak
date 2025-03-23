@@ -15,6 +15,7 @@ interface EventProps {
 
 
 const EventOne = ({ event, openModal, openModalGroup, mest }: EventProps) => {
+
   const { Title, Paragraph } = Typography;
 
   const dateEvent = useMemo(() => {

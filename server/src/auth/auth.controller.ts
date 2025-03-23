@@ -5,27 +5,27 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post("/login")
+  @Post('/login')
   @HttpCode(200)
-  async login(@Body() body){
-    const {login,password} = body
-    const result = await this.authService.login(login,password)
-    return result
+  async login(@Body() body) {
+    const { login, password } = body;
+    const result = await this.authService.login(login, password);
+    return result;
   }
 
-  @Post("/register")
+  @Post('/register')
   @HttpCode(200)
-  async register(@Body() body){
-    const {login,password} = body
-    const result = await this.authService.register(login,password)
-    return result
+  async register(@Body() body) {
+    const { login, password } = body;
+    const result = await this.authService.register(login, password);
+    return result;
   }
 
-  @Post("/token")
+  @Post('/token')
   @HttpCode(200)
-  async token(@Body() body){
-    const {token} = body
-    const result = await this.authService.refreshToken(token)
-    return result
+  async token(@Body() body) {
+    const { token } = body;
+    const result = await this.authService.refreshToken(token);
+    return result;
   }
 }
