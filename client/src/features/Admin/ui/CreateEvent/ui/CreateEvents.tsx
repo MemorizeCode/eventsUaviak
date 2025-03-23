@@ -1,7 +1,13 @@
 import { AppDispatch, RootState } from "@/app/providers/store/store";
 import { fetchCreateEvents } from "@/features/Admin";
 import { CreateEventError, ValidationError } from "@/features/Admin/models/service/fetchCreateEvent";
-import { Card, Input, Button, Space, Typography, Select, message } from "antd";
+import Card from 'antd/es/card';
+import Input from 'antd/es/input';
+import Button from 'antd/es/button';
+import Space from 'antd/es/space';
+import Typography from 'antd/es/typography';
+import Select from 'antd/es/select';
+import message from 'antd/es/message';
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 

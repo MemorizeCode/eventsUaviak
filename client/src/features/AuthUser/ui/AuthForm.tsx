@@ -5,7 +5,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import  message  from "antd/es/message";
-import { fetchAuthUser } from "../models/service/fetchAuthUser";
+import { AuthUserError, fetchAuthUser } from "../models/service/fetchAuthUser";
+import { AppDispatch } from "@/app/providers/store/store";
 
 
 const AuthForm = () => {
@@ -13,17 +14,18 @@ const AuthForm = () => {
     const [password, setPassword] = useState("")
     
     const navigate = useNavigate()
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
 
     async function loginUser() {
         const response = await dispatch(fetchAuthUser({ login, password }))
+        const payload = response.payload as AuthUserError
         console.log(response)
-        if (response.payload.status == 200) {
-            message.success(response?.payload?.data?.message)
+        if(response.meta.requestStatus == "fulfilled"){
+            message.success(payload.message)
             navigate("/")
         }
-        else {
-            message.error(response?.payload)
+        else{
+            message.error(payload.message)
         }
     }
 

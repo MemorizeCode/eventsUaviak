@@ -1,12 +1,21 @@
 
-import { AppDispatch, RootState } from "@/app/providers/store/store";
+import { AppDispatch } from "@/app/providers/store/store";
 import { DeleteEventError, fetchDeleteEvent } from "@/features/Admin/models/service/fetchDeleteEvent";
-import { Button, Card, Input, message, Space, Typography } from "antd";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
-const DeleteEvents = () => {
+import { memo, useState, useMemo } from "react";
+import { useDispatch } from "react-redux";
+import Button from "antd/es/button";
+import Card from "antd/es/card";
+import Input from "antd/es/input";
+import Space from "antd/es/space";
+import Typography from "antd/es/typography";
+import { message } from "antd";
+
+
+const DeleteEvents = memo(() => {
     const { Title } = Typography;
+
+    const MemoizedTitle = useMemo(() => <Title level={2}>Удалить мероприятие</Title>, []);
 
     const dispatch = useDispatch<AppDispatch>()
     const [idEvent, setIdEvent] = useState<number | string>('')
@@ -27,14 +36,14 @@ const DeleteEvents = () => {
         }
     }
     return (<>
-        <Card>
-            <Space direction="vertical">
-                <Title level={2}>Удалить мероприятие</Title>
+        <Card style={{ minWidth: "500px" }}>
+            <Space direction="vertical" style={{ width: "100%" }}>
+                {MemoizedTitle}
                 <Input placeholder="ID мероприятия" onChange={e => setIdEvent(e.target.value)} value={idEvent} required />
                 <Button type="primary" style={{ background: "red" }} onClick={deleteEvents}>Удалить</Button>
             </Space>
         </Card>
     </>);
-}
+})
 
 export default DeleteEvents;

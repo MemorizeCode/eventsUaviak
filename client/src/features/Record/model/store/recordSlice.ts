@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchRecord } from '../service/fetchRecord'
-import { message } from 'antd'
 
 
 export const recordSlice = createSlice({
@@ -15,10 +14,10 @@ export const recordSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchRecord.pending, () => {
     })
-    builder.addCase(fetchRecord.fulfilled, (payload) => {
+    builder.addCase(fetchRecord.fulfilled, () => {
     })
     builder.addCase(fetchRecord.rejected, (state, payload) => {
-      state.error = payload.payload
+      state.error = payload.payload?.error as string
     })
   }
 })

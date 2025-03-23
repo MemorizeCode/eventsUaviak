@@ -1,11 +1,18 @@
 import { AppDispatch, RootState } from "@/app/providers/store/store";
-import { Button, Card, Input, message, Select, Space, Typography } from "antd";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { EditSpesialError, fetchEditSpesial } from "../../../models/service/fetchEditSpesial";
-import { fetchAllSpecial } from "@/features/Admin/models/service/fetchAllSpecial";
+import { fetchAllSpecial, Spesial } from "@/features/Admin/models/service/fetchAllSpecial";
+import Button from "antd/es/button";
+import Card from "antd/es/card";
+import Input from "antd/es/input";
+import Space from "antd/es/space";
+import Typography from "antd/es/typography";
+import { message } from "antd";
+import Select from "antd/es/select";
 
-const EditSpecial = () => {
+
+const EditSpecial = memo(() => {
     const { Title } = Typography
     const [title, setTitle] = useState("")
     const [id, setId] = useState(null)
@@ -45,10 +52,10 @@ const EditSpecial = () => {
                     value={selectSpecial} // Управляем значением Select
                     style={{ width: "100%" }}
                     allowClear // Добавляем возможность очистки
-                >
-                    {allSpecial.map((special: any) => (
-                        <Select.Option key={special.id} value={special.id}>
-                            {special.title}
+                    >
+                    {allSpecial.map((special: Spesial | unknown) => (
+                        <Select.Option key={(special as Spesial).id} value={(special as Spesial).id}>
+                            {(special as Spesial).title}
                         </Select.Option>
                     ))}
                 </Select>
@@ -62,6 +69,6 @@ const EditSpecial = () => {
             </Space>
         </Card>
     </>);
-}
+})
 
 export default EditSpecial;

@@ -1,15 +1,17 @@
 import { Form, Input, Rate, Button, Typography, message } from "antd";
-import { useState } from "react";
+import { useState, useMemo, memo } from "react";
 import { useDispatch } from "react-redux";
 import { fetchNewReviews, IReviewResponse } from "../model/services/fetchNewReviews";
 import { AppDispatch } from "@/app/providers/store/store";
 
-const Reviews = () => {
+const Reviews = memo(() => {
     const { Paragraph } = Typography
 
     const [rating, setRaiting] = useState<number>(0)
     const dispatch = useDispatch<AppDispatch>()
     const [form] = Form.useForm();
+
+    const memoizedInput = useMemo(() => <Input />, []);
 
     async function onFinish(e: { name: string, text: string, stars: number }) {
         const response = await dispatch(fetchNewReviews({name: e.name, reviews: e.text, stars: e.stars}))
@@ -36,7 +38,7 @@ const Reviews = () => {
                 label="Ваше имя"
                 rules={[{ required: true, message: 'Пожалуйста, укажите ваше имя!' }]}
             >
-                <Input />
+                {memoizedInput}
             </Form.Item>
             <Form.Item
                 name="text"
@@ -62,6 +64,6 @@ const Reviews = () => {
             </Form.Item>
         </Form>
     </>);
-}
+})
 
 export default Reviews;

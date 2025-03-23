@@ -1,32 +1,55 @@
 import  $api  from '@/app/config/api'
 import { createAsyncThunk } from '@reduxjs/toolkit'
-import { message } from 'antd'
 
-export const fetchRecord: any = createAsyncThunk("fetchRecord",
-    async ({ firstName, lastName, surName, school, classRoom, telephone, idEvent }: any, thunkAPI) => {
+export interface RecordError {
+    message: string
+    error: string
+}
+
+interface RecordResponse {
+    message: string
+    // error: string
+}
+
+interface RecordParams {
+    firstName: string
+    lastName: string
+    surName: string
+    school: string
+    classRoom: string
+    telephone: string
+    idEvent: number | null
+}
+
+
+export const fetchRecord = createAsyncThunk<RecordResponse, RecordParams, { rejectValue: RecordError }>("fetchRecord",
+    async ({ firstName, lastName, surName, school, classRoom, telephone, idEvent }: RecordParams, thunkAPI) => {
         try {
             const nameRegex = /^[a-zA-Zа-яА-Я\s'-]+$/;
 
             if (!firstName || typeof firstName !== 'string' || !nameRegex.test(firstName.trim())) {
-                throw new Error("Имя должно быть заполнено и содержать только буквы.");
+                return thunkAPI.rejectWithValue({ message: "Имя должно быть заполнено и содержать только буквы.", error: "warning"})
             }
             if (!lastName || typeof lastName !== 'string' || !nameRegex.test(lastName.trim())) {
-                throw new Error("Фамилия должна быть заполнена и содержать только буквы.");
+                return thunkAPI.rejectWithValue({ message: "Фамилия должна быть заполнена и содержать только буквы.", error: "warning"})
             }
             if (!surName || typeof surName !== 'string' || !nameRegex.test(surName.trim())) {
-                throw new Error("Отчество должно быть заполнено и содержать только буквы.");
+                return thunkAPI.rejectWithValue({ message: "Отчество должно быть заполнено и содержать только буквы.", error: "warning"})
             }
             if (!school || typeof school !== 'string' || school.trim() === '') {
-                throw new Error("Школа должна быть заполнена.");
+                return thunkAPI.rejectWithValue({ message: "Школа должна быть заполнена.", error: "warning"})
             }
             if (!classRoom || typeof classRoom !== 'string' || classRoom.trim() === '') {
-                throw new Error("Класс должен быть заполнен.");
+                return thunkAPI.rejectWithValue({ message: "Класс должен быть заполнен.", error: "warning"})
             }
-            if (!telephone) {
-                throw new Error("Телефон должен быть числом.");
-            }
+            if (telephone) {
+                const phoneValid = /^[0-9]+$/;
+                if(!phoneValid.test(telephone) || telephone.length < 11){
+                  return thunkAPI.rejectWithValue({ message: "Неверный номер телефона", error: "warning"})
+                }
+              }
             if (!idEvent || typeof idEvent !== 'number') {
-                throw new Error("ID события должно быть числом.");
+                return thunkAPI.rejectWithValue({ message: "ID события должно быть числом.", error: "warning"})
             }
 
             const response = await $api.post("/record/createInvididualRecord", {
@@ -39,18 +62,16 @@ export const fetchRecord: any = createAsyncThunk("fetchRecord",
                 eventsId: idEvent
             })
             if (response.status === 200) {
-                message.success(`Вы записались на мероприятие "${response.data}"`)
-                return response
+                return response.data
             }
-            else if (response.status === 403) {
-                throw new Error("Запись прекращена. Нет мест")
-            }
-            else {
-                throw new Error("Ошибка сервера")
-            }
+            return thunkAPI.rejectWithValue({
+                message: response.data.message,
+                error: response.data.error
+            })
         }
-        catch (e: any) {
-            return thunkAPI.rejectWithValue(e.message || e.response?.data?.message || "Неизвестная ошибка")
+        catch (e) {
+            const error = e as {response: {data: RecordError}}
+            return thunkAPI.rejectWithValue(error.response.data)
         }
     }
 )

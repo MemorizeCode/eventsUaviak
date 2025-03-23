@@ -3,11 +3,15 @@ import { fetchGetStatsEventPopularSpecial } from "@/features/Admin/models/servic
 import { fetchGetStatsEventMount } from "@/features/Admin/models/service/fetchGetStatsEventsMount";
 import { fetchGetStatsEventsYear } from "@/features/Admin/models/service/fetchGetStatsEventsYear";
 import { fetchGetStatsSchool, School } from "@/features/Admin/models/service/fetchGetStatsSchool";
-import { Card, Input, Select, Tag, Typography } from "antd";
-import { useEffect, useState } from "react";
+import Card from "antd/es/card";
+import Input from "antd/es/input";
+import Select from "antd/es/select";
+import Tag from "antd/es/tag";
+import Typography from "antd/es/typography";
+import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const StatsEvent = () => {
+const StatsEvent = memo(() => {
     const { Title } = Typography;
 
     const [yearStats, setYearStats] = useState<number | string>(2025)
@@ -21,18 +25,20 @@ const StatsEvent = () => {
 
     useEffect(() => {
         dispatch(fetchGetStatsEventsYear({ yearStats }))
-    }, [yearStats])
+    }, [dispatch,yearStats])
 
 
     useEffect(() => {
         dispatch(fetchGetStatsEventMount({ year: Number(yearStats), month: Number(monthStats) }))
-    }, [monthStats, yearStats])
+    }, [monthStats, yearStats,dispatch])
 
 
     useEffect(() => {
         dispatch(fetchGetStatsSchool())
         dispatch(fetchGetStatsEventPopularSpecial())
-    }, [])
+    }, [dispatch])
+
+    
 
     const months = [
         { id: 1, month: "Январь" },
@@ -77,6 +83,6 @@ const StatsEvent = () => {
             <p>Количество мероприятий: {mostPopularSpecialty.eventsCount}</p>
         </Card>
     </>);
-}
+})
 
 export default StatsEvent;

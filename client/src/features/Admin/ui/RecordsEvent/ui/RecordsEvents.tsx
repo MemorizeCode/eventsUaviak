@@ -1,14 +1,16 @@
 import { RootState } from "@/app/providers/store/store";
 import { fetchGetRecords } from "@/features/Admin";
-import { Button, Card, Table, Typography } from "antd";
-import { useEffect } from "react";
+import Card from "antd/es/card";
+import Table from "antd/es/table";
+import Typography from "antd/es/typography";
+import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-const RecordsEvents = () => {
+// import { Button } from "antd";
+const RecordsEvents = memo(() => {
     const { Title } = Typography;
     const dispatch = useDispatch()
     const records = useSelector((state: RootState) => state?.recordsEvents?.records)
-    const message = useSelector((state: RootState) => state?.recordsEvents?.message)
+    // const message = useSelector((state: RootState) => state?.recordsEvents?.message)
     const columns = [
         {
             title: "ID",
@@ -23,7 +25,11 @@ const RecordsEvents = () => {
         {
             title: "Телефон",
             dataIndex: 'phone',
-            key: 'phone'
+            key: 'phone',
+            render: (text: string) => {
+                const templatePhone = `${text.slice(0, 1)}-${text.slice(1, 4)}-${text.slice(4, 7)}-${text.slice(7, 9)}-${text.slice(9, 11)}` 
+                return <p>{templatePhone}</p>
+            }
         },
         {
             title: "Школа",
@@ -59,18 +65,19 @@ const RecordsEvents = () => {
 
     useEffect(() => {
         dispatch(fetchGetRecords())
-    }, [])
+    }, [dispatch])
 
     return (<>
-        <Card>
+        <Card style={{ minWidth: "500px" }}>
             <Title level={2}>Записи на мероприятия</Title>
-            {message && <h2>{message}</h2>}
             
-            {records && Array.isArray(records) && records.length > 0 &&
+            {records && Array.isArray(records) && records.length > 0 ?
                 <Table rowKey="id" columns={columns} dataSource={records} />
+            :
+                <p>Записей нет</p>
             }
         </Card>
     </>);
-}
+})
 
 export default RecordsEvents;

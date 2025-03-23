@@ -13,13 +13,10 @@ const ReviewsPage = () => {
     const { Title } = Typography;
     const dispatch = useDispatch<AppDispatch>()
 
-    async function getReviews() {
-        await dispatch(fetchGetReviews())
-    }
 
     useEffect(() => {
-        getReviews()
-    }, [])
+        dispatch(fetchGetReviews())
+    }, [dispatch])
 
 
     return (

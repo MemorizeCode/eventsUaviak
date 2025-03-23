@@ -20,4 +20,20 @@ export class SpesialController {
     const result = await this.spesialService.updateSpecial(body)
     return result
   }
+
+  @UseGuards(AdminGuard)
+  @Post('/newSpecial')
+  @HttpCode(200)
+  async newSpecial(@Body() body){
+    const result = await this.spesialService.newSpecial(body)
+    return result
+  }
+
+  @UseGuards(AdminGuard)
+  @Delete('/deleteSpecial')
+  @HttpCode(200)
+  async deleteSpecial(@Query('id') id: string){
+    const result = await this.spesialService.deleteSpecial(id)
+    return result
+  }
 }

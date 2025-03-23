@@ -1,6 +1,14 @@
 import  $api from '@/app/config/api'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
+export interface EventSchema {
+    id: number
+    title: string
+    description: string
+    date: string
+    times: string
+}
+
 export const fetchGetEvents:any = createAsyncThunk("fetchGetEvents", async () => {
     try {
         const response = await $api.get("/events/getEvents")

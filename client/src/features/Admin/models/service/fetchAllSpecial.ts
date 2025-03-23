@@ -4,11 +4,13 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export interface ReturnSpecialData {
     message: string
-    data: {
-        id: number
-        title: string
-    }[]
+    data: Spesial[]
 }
+
+export interface Spesial {
+    id: number
+    title: string
+}   
 
 export const fetchAllSpecial = createAsyncThunk<ReturnSpecialData, void, { rejectValue: string }>("fetchAllSpecial",
      async (_, thunkAPI) => {

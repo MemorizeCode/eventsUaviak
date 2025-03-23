@@ -13,12 +13,11 @@ export const reviewsSlice = createSlice({
         builder.addCase(fetchGetReviews.pending, ()=>{
             console.log("pending")
         })
-        builder.addCase(fetchGetReviews.fulfilled, (state,action)=>{
-            console.log(action)
-            state.reviewsList = action.payload
+        builder.addCase(fetchGetReviews.fulfilled, ()=>{
+            
         })
-        builder.addCase(fetchGetReviews.rejected, (state,action)=>{
-            console.log(action)
+        builder.addCase(fetchGetReviews.rejected, ()=>{
+
         })
     }
 })

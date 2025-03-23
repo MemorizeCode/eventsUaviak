@@ -1,11 +1,37 @@
-import  $api from "@/app/config/api";
+import $api from "@/app/config/api";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { UploadFile } from "antd";
 
-export const fetchRecordGr: any = createAsyncThunk(
-  "fetchRecordGr",
+
+
+export interface RecordGroupError {
+  message: string
+  error: string
+}
+
+export interface RecordGroupResponse {
+  message: string
+}
+
+export interface RecordGroupParams {
+  formData: RecordGroupFormData
+  fileList: UploadFile[]
+  idEvent: number | null
+}
+
+interface RecordGroupFormData {
+  firstNameAttendant: string
+  lastNameAttendant: string
+  surnameAttendant: string
+  school: string
+  classSchool: string
+  countPeople: number | null
+  tel: string
+}
+
+export const fetchRecordGr = createAsyncThunk<RecordGroupResponse, RecordGroupParams, { rejectValue: RecordGroupError }>("fetchRecordGr",
   async (
-    { formData, fileList, idEvent }: { formData: any; fileList: UploadFile[]; idEvent: number },
+    { formData, fileList, idEvent }: RecordGroupParams,
     thunkAPI
   ) => {
     try {
@@ -14,32 +40,56 @@ export const fetchRecordGr: any = createAsyncThunk(
       const nameRegex = /^[a-zA-Zа-яА-Я\s'-]+$/;
 
       if (!firstNameAttendant || typeof firstNameAttendant !== 'string' || !nameRegex.test(firstNameAttendant.trim())) {
-        throw new Error("Имя сопровождающего должно быть заполнено и содержать только буквы.");
+        return thunkAPI.rejectWithValue({ message: "Имя сопровождающего должно быть заполнено и содержать только буквы.", error: "warning" })
       }
       if (!lastNameAttendant || typeof lastNameAttendant !== 'string' || !nameRegex.test(lastNameAttendant.trim())) {
-        throw new Error("Фамилия сопровождающего должна быть заполнена и содержать только буквы.");
+        return thunkAPI.rejectWithValue({ message: "Фамилия сопровождающего должна быть заполнена и содержать только буквы.", error: "warning" })
       }
       if (!surnameAttendant || typeof surnameAttendant !== 'string' || !nameRegex.test(surnameAttendant.trim())) {
-        throw new Error("Отчество сопровождающего должно быть заполнено и содержать только буквы.");
+        return thunkAPI.rejectWithValue({ message: "Отчество сопровождающего должно быть заполнено и содержать только буквы.", error: "warning" })
       }
       if (!school || typeof school !== 'string' || school.trim() === '') {
-        throw new Error("Школа должна быть заполнена.");
+        return thunkAPI.rejectWithValue({ message: "Школа должна быть заполнена.", error: "warning" })
       }
       if (!classSchool || typeof classSchool !== 'string' || classSchool.trim() === '') {
-        throw new Error("Класс должен быть заполнен.");
+        return thunkAPI.rejectWithValue({ message: "Класс должен быть заполнен.", error: "warning" })
       }
       if (!countPeople || typeof countPeople !== 'number') {
-        throw new Error("Количество людей должно быть числом.");
+        return thunkAPI.rejectWithValue({ message: "Количество людей должно быть числом.", error: "warning" })
       }
       if (!idEvent || typeof idEvent !== 'number') {
-        throw new Error("ID события должно быть числом.");
+        return thunkAPI.rejectWithValue({ message: "ID события должно быть числом.", error: "warning" })
       }
-      if (!tel) {
-        throw new Error("Нету телефона");
+      if (tel) {
+        const phoneValid = /^[0-9]+$/;
+        if(!phoneValid.test(tel) || tel.length < 11){
+          return thunkAPI.rejectWithValue({ message: "Неверный номер телефона", error: "warning"})
+
+        }
       }
+
       if (!fileList || !Array.isArray(fileList) || fileList.length === 0 || !fileList[0]?.originFileObj) {
-        throw new Error("Необходимо загрузить файл списка.");
+        return thunkAPI.rejectWithValue({ message: "Необходимо загрузить файл списка.", error: "warning" })
       }
+
+      // Валидация файла
+      const allowedExtensions = ['.doc', '.docx'];
+      const allowedMimeTypes = ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+
+      const file = fileList[0].originFileObj;
+      const fileName = file.name.toLowerCase();
+      const fileExtension = fileName.slice(fileName.lastIndexOf('.'));
+      const fileMimeType = file.type;
+
+      // Проверка расширения файла
+      if (!allowedExtensions.includes(fileExtension)) {
+        return thunkAPI.rejectWithValue({ message: "Файл должен быть в формате .doc или .docx.", error: "warning" });
+      }
+      // Проверка MIME-типа файла
+      if (!allowedMimeTypes.includes(fileMimeType)) {
+        return thunkAPI.rejectWithValue({ message: "Недопустимый тип файла. Разрешены только документы Word.", error: "warning" });
+      }
+
 
       const formDataToSend = new FormData();
       formDataToSend.append('firstNameAttendant', firstNameAttendant);
@@ -52,21 +102,27 @@ export const fetchRecordGr: any = createAsyncThunk(
       formDataToSend.append('phone', tel);
       formDataToSend.append('fileList', fileList[0].originFileObj);
 
-      const response = await $api.post("/record/createGroupRecord", formDataToSend, {
+      const response = await $api.post<RecordGroupResponse>("/record/createGroupRecord", formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
       });
 
       if (response.status === 200) {
-        return thunkAPI.fulfillWithValue("Вы записались");
-      } else if (response.status === 403) {
-        throw new Error("Запись прекращена");
-      } else {
-        throw new Error("Произошла ошибка при отправке данных.");
+        return thunkAPI.fulfillWithValue(response.data);
       }
-    } catch (e: any) {
-      return thunkAPI.rejectWithValue(e.message || e.response?.data?.message || "Неизвестная ошибка");
+      return thunkAPI.rejectWithValue({
+        message: response.data.message,
+        error: 'error'
+      })
+    } catch (e) {
+      const error = e as { response: { data: RecordGroupError } }
+      return thunkAPI.rejectWithValue(
+        {
+          message: error.response.data.message,
+          error: 'error'
+        }
+      );
     }
   }
 );

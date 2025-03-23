@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { fetchAllSpecial } from '../service/fetchAllSpecial'
 import { fetchGetRecords } from '../service/fetchGetRecords'
-import { CreateEventError, fetchCreateEvents } from '../service/fetchCreateEvent'
+import { fetchCreateEvents } from '../service/fetchCreateEvent'
 import { fetchDeleteEvent } from '../service/fetchDeleteEvent'
 import { FetchAllSpecialSchema } from '../types/fetchAllSpecail'
 import { fetchGetStatsEventsYear } from '../service/fetchGetStatsEventsYear'
@@ -19,9 +19,7 @@ const initialState: FetchAllSpecialSchema   = {
 export const allSpecialSlice = createSlice({
   name: 'allSpecial',
   initialState,
-  reducers: {
-
-  },
+  reducers: {},
   extraReducers: (builder)=>{
     builder.addCase(fetchAllSpecial.pending, (state)=>{
       state.isLoading = true
@@ -58,7 +56,7 @@ export const recordsSlice = createSlice({
       state.isLoading = true
     }),
     builder.addCase(fetchGetRecords.fulfilled, (state, action) => {
-      state.records = action.payload
+      state.records = action.payload.reverse()
     }),
     builder.addCase(fetchGetRecords.rejected, (state, action) => {
       state.isLoading = false
@@ -81,14 +79,12 @@ const initialStateCreateEvent = {
 export const createEventSlice = createSlice({
   name: 'createEvent',
   initialState: initialStateCreateEvent,
-  reducers: {
-
-  },
+  reducers: {},
   extraReducers: (builder)=>{
     builder.addCase(fetchCreateEvents.pending, (state)=>{
       state.isLoading = true
     }),
-    builder.addCase(fetchCreateEvents.fulfilled, (state, action) => {
+    builder.addCase(fetchCreateEvents.fulfilled, (state) => {
       state.isLoading = false
     }),
     builder.addCase(fetchCreateEvents.rejected, (state, action) => {
@@ -122,7 +118,7 @@ export const deleteEventSlice = createSlice({
       state.isLoading = false
       state.message = action.payload.message
     }),
-    builder.addCase(fetchDeleteEvent.rejected, (state, action: any) => {
+    builder.addCase(fetchDeleteEvent.rejected, (state) => {
       state.isLoading = false
     })
   }

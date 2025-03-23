@@ -1,13 +1,29 @@
 
 
+import $api from '@/app/config/api'
 import { userSliceActions } from '@/entities/User/model/store/userSlice'
 import {createAsyncThunk} from '@reduxjs/toolkit'
-import axios from 'axios'
 
-export const fetchAuthUser:any = createAsyncThunk("authUser",
-    async ({login,password}:any, thunkAPI) =>{
+interface AuthUserResponse {
+    message: string
+    accessToken: string
+    refreshToken: string
+    role: string
+}
+export interface AuthUserError {
+    message: string
+    error: string
+}
+
+interface AuthUserParams {
+    login: string
+    password: string
+}
+
+export const fetchAuthUser = createAsyncThunk<AuthUserResponse, AuthUserParams, { rejectValue: AuthUserError }>("authUser",
+    async ({login,password}:AuthUserParams, thunkAPI) =>{
         try{
-            const response = await axios.post("http://localhost:3000/api/auth/login",{
+            const response = await $api.post<AuthUserResponse>("/auth/login",{
                 login,password
             })
             if(response.status === 200){
@@ -16,11 +32,19 @@ export const fetchAuthUser:any = createAsyncThunk("authUser",
                 localStorage.setItem("refreshToken", response.data.refreshToken)
                 thunkAPI.dispatch(userSliceActions.setRole(response.data.role))
                 thunkAPI.dispatch(userSliceActions.setAuth(true))
-                return thunkAPI.fulfillWithValue(response)
+                return thunkAPI.fulfillWithValue(response.data)
             }
+            return thunkAPI.rejectWithValue({
+                message: response.data.message,
+                error: 'error'
+            })
         }
-        catch(e:any){
-            return thunkAPI.rejectWithValue(e.response?.data?.message)
+        catch(e){
+            const payload = e as {response: {data: AuthUserError}}
+            return thunkAPI.rejectWithValue({
+                message: payload.response.data.message,
+                error: 'error'
+            })
         }
     }
 )

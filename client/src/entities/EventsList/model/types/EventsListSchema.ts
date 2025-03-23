@@ -1,3 +1,5 @@
+
+
 export interface EventsListSchema {
     eventList: EventSchema[]
     fetchEventList: ()=>void
@@ -7,8 +9,8 @@ export interface EventSchema {
     id:number
     title: string
     description: string
-    date: Date | unknown
-    times: Date | unknown
+    date: string
+    times: string
     duration: number
     cabinet: number
     people_count: number

@@ -6,6 +6,7 @@ export const fetchGetRecords:any = createAsyncThunk("fetchGetRecords", async (_,
         const response = await $api.get("/record/getRecords")
         if(response?.status === 200){
             return thunkAPI.fulfillWithValue(response.data)
+
         }
         return thunkAPI.rejectWithValue(response.data)
     

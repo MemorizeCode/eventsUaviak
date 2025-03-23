@@ -19,10 +19,10 @@ export const authSlice = createSlice({
     builder.addCase(fetchAuthUser.pending, ()=>{
         console.log("penging auth")
     })
-    builder.addCase(fetchAuthUser.fulfilled, (action)=>{
+    builder.addCase(fetchAuthUser.fulfilled, ()=>{
         console.log('fulfilled auth')
     })
-    builder.addCase(fetchAuthUser.rejected, ( payload)=>{
+    builder.addCase(fetchAuthUser.rejected, ()=>{
       console.log('rejected auth')
     })
   }

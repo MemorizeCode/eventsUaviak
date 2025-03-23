@@ -1,20 +1,25 @@
-import { Modal, Form, Input, Button, Upload, message } from 'antd'; // Import Ant Design components
-import { useState } from "react";
+import Modal from "antd/es/modal";
+import Form from "antd/es/form";
+import Input from "antd/es/input";
+import Button from "antd/es/button";
+import Upload from "antd/es/upload";
+import { message } from "antd";
+import { memo, useState } from "react";
 import { useDispatch } from 'react-redux';
-import { fetchRecordGr } from '@/features/RecordGroup/model/service/fetchRecord';
+import { fetchRecordGr, RecordGroupError } from '@/features/RecordGroup/model/service/fetchRecord';
 import { RcFile, UploadChangeParam, UploadFile, UploadProps } from 'antd/es/upload';
+import { AppDispatch } from '@/app/providers/store/store';
 
 interface ModalGroupProps {
   isOpen: boolean;
   closeModal: () => void;
-  idEvent: string;
+  idEvent: number | null;
 }
 
-const ModalGroup = ({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
-  const dispatch = useDispatch();
+const ModalGroup = memo(({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
+  const dispatch = useDispatch<AppDispatch>();
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [error, setError] = useState("");
 
 
   const [formData, setFormData] = useState({
@@ -42,11 +47,38 @@ const ModalGroup = ({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
   };
 
 
+  const beforeUpload = (file: RcFile) => {
+    const allowedExtensions = ['.doc', '.docx'];
+    const allowedMimeTypes = [
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+
+    const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+    const fileMimeType = file.type;
+
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      message.error('Файл должен быть в формате .doc или .docx');
+      setFileList([]); 
+      return Upload.LIST_IGNORE; 
+    }
+
+  
+    if (!allowedMimeTypes.includes(fileMimeType)) {
+      message.error('Недопустимый тип файла. Разрешены только документы Word.');
+      setFileList([]); 
+      return Upload.LIST_IGNORE; 
+    }
+
+   
+    setFileList([file as UploadFile]);
+    return false; 
+  };
+
+
   const uploadProps: UploadProps = {
-    beforeUpload: (file: RcFile) => {
-      setFileList([file as UploadFile]);
-      return false;
-    },
+    beforeUpload,
     onChange: handleFileChange,
     listType: "picture",
   };
@@ -60,18 +92,21 @@ const ModalGroup = ({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
           idEvent,
         })
       );
-  
+      const payload = response.payload as RecordGroupError
       if (response.meta.requestStatus === "fulfilled") {
         form.resetFields();
         setFileList([]);
         closeModal();
-        message.success("Успешно записались на мероприятие");
-      } else if (response.meta.requestStatus === "rejected") {
-        message.error(response.payload);
+        message.success(payload.message);
+      } 
+      else if (payload.error == "warning") {
+        message.warning(payload.message)
       }
-    } catch (e) {
-      console.log(e)
-      setError("Произошла ошибка при отправке данных.");
+      else {
+        message.error(payload.message)
+      }
+    } catch (_) {
+      message.error("Не известная ошибк")
     }
   };
 
@@ -185,7 +220,6 @@ const ModalGroup = ({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
               <Button>Загрузить</Button>
             </Upload>
           </Form.Item>
-          {error && <p className="text-red-600">{error}</p>}
           <Form.Item>
             <Button type="primary" htmlType="submit" style={{ background: "#456B92" }}>
               Записаться группой
@@ -195,6 +229,6 @@ const ModalGroup = ({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
       </Modal>
     </>
   )
-}
+})
 
 export default ModalGroup;

@@ -16,6 +16,10 @@ import { EditEventAsync } from "./ui/EditEvents"
 import { RecordsEventsAsync } from "./ui/RecordsEvent"
 import { statsEventSliceReducer } from "./models/slice/adminSlice"
 import { EditSpesialAsync } from "./ui/EditSpesial"
+import { NewSpesialAsync } from "./ui/NewSpesial"
+import { fetchNewSpesial } from "./models/service/fetchNewSpesial"
+import { fetchDeleteSpesial } from "./models/service/fetchDeleteSpesial"
+import { DeleteSpesialAsync } from "./ui/DeleteSpesial"
 export {
     fetchAllSpecial,
     allSpecialSliceReducer,
@@ -34,5 +38,9 @@ export {
     EditEventAsync,
     RecordsEventsAsync,
     statsEventSliceReducer,
-    EditSpesialAsync
+    EditSpesialAsync,
+    NewSpesialAsync,
+    fetchNewSpesial,
+    fetchDeleteSpesial,
+    DeleteSpesialAsync
 }

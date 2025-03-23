@@ -1,9 +1,19 @@
 import { AppDispatch, RootState } from "@/app/providers/store/store";
 import { fetchEditEvent } from "@/features/Admin";
+import { Spesial } from "@/features/Admin/models/service/fetchAllSpecial";
 import { EditEventError } from "@/features/Admin/models/service/fetchEditEvent";
-import { Button, Card, Input, message, Select, Space, Typography } from "antd";
-import { useState } from "react";
+import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useMemo } from "react";
+import { createSelector } from "reselect";
+import Button from "antd/es/button";
+import Card from "antd/es/card";
+import Input from "antd/es/input";
+import Space from "antd/es/space";
+import Typography from "antd/es/typography";
+import { message } from "antd";
+import Select from "antd/es/select";
+
 
 const { Title } = Typography;
 
@@ -21,7 +31,12 @@ interface EventFormState {
     idSpecEvent: string;
 }
 
-const EditEvent = () => {
+const selectMemoizedAllSpecial = createSelector(
+    (state: RootState) => state.allSpecial.allSpecial,
+    (special) => special
+);
+
+const EditEvent = memo(() => {
     const [formState, setFormState] = useState<EventFormState>({
         idEvent: '',
         titleEvents: '',
@@ -37,13 +52,19 @@ const EditEvent = () => {
     });
 
     const dispatch = useDispatch<AppDispatch>();
-    const allSpecial = useSelector((state: RootState) => state.allSpecial.allSpecial);
+    const allSpecial = useSelector(selectMemoizedAllSpecial);
+    const [selectSpecial, setSelectedSpecial] = useState<string | null>(null)
 
-    const handleInputChange = (field: keyof EventFormState, value: string) => {
+    const handleInputChange = useCallback((field: keyof EventFormState, value: string) => {
         setFormState(prev => ({ ...prev, [field]: value }));
-    };
+    }, []);
 
-    const editEvents = async () => {
+    const handleSelectChange = useCallback((value: string | undefined) => {
+        handleInputChange('idSpecEvent', value || '');
+        setSelectedSpecial(value || null);
+    }, [handleInputChange]);
+
+    const editEvents = useCallback(async () => {
         const response = await dispatch(fetchEditEvent(formState));
         const payload = response.payload as EditEventError;
         if (response.meta.requestStatus === "fulfilled") {
@@ -55,9 +76,9 @@ const EditEvent = () => {
         else{
             message.error(payload.message)
         }
-    };
+    }, [dispatch, formState]);
 
-    const clearFields = () => {
+    const clearFields = useCallback(() => {
         setFormState({
             idEvent: '',
             titleEvents: '',
@@ -71,11 +92,25 @@ const EditEvent = () => {
             prepodEvents: '',
             idSpecEvent: '',
         });
-    };
+        setSelectedSpecial(null)
+    }, []);
+
+    const cardStyle = useMemo(() => ({ width: "500px" }), []);
+    const spaceStyle = useMemo(() => ({ width: "100%" }), []);
+    const editButtonStyle = useMemo(() => ({ marginTop: "10px", background: "green" }), []);
+    const clearButtonStyle = useMemo(() => ({ marginTop: "10px", background: "orange" }), []);
+
+    const specialOptions = useMemo(() => 
+        allSpecial.map((special: Spesial | unknown) => (
+            <Select.Option key={(special as Spesial).id} value={(special as Spesial).id}>
+                {(special as Spesial).title}
+            </Select.Option>
+        )),
+    [allSpecial]);
 
     return (
-        <Card style={{ width: "500px" }}>
-            <Space direction="vertical" style={{ width: "100%" }} >
+        <Card style={cardStyle}>
+            <Space direction="vertical" style={spaceStyle} >
                 <Title level={2}>Редактировать мероприятие</Title>
                 <Input
                     placeholder='ID мероприятия'
@@ -142,26 +177,23 @@ const EditEvent = () => {
                     required
                 />
                 <Select
-                    placeholder="Специальность"
-                    onChange={value => handleInputChange('idSpecEvent', value)}
-                    value={formState.idSpecEvent}
+                    placeholder="Выберите специальность"
+                    onChange={handleSelectChange}
+                    value={selectSpecial || undefined}
                     style={{ width: "100%" }}
+                    allowClear
                 >
-                    {allSpecial?.map((item: any) => (
-                        <Select.Option key={item.id} value={item.id}>
-                            {item.title}
-                        </Select.Option>
-                    ))}
+                    {specialOptions}
                 </Select>
-                <Button type='primary' style={{ marginTop: "10px", background: "green" }} onClick={editEvents}>
+                <Button type='primary' style={editButtonStyle} onClick={editEvents}>
                     Редактировать мероприятие
                 </Button>
-                <Button type='primary' style={{ marginTop: "10px", background: "orange" }} onClick={clearFields}>
+                <Button type='primary' style={clearButtonStyle} onClick={clearFields}>
                     Очистить поля
                 </Button>
             </Space>
         </Card>
     );
-};
+})
 
 export default EditEvent;
