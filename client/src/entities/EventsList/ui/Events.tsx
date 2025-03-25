@@ -2,10 +2,11 @@ import Event from "@/widget/Event/Event";
 import ModalRecord from "@/widget/Modal/ModalRecord/ModaRecord";
 import { memo, useEffect, useState, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchGetEvents } from "../model/service/fetchEventList";
+import { fetchGetEvents, FetchGetEventsData } from "../model/service/fetchEventList";
 import ModalGroup from "@/widget/Modal/ModalRecordGroup/ModalGroup";
 import Flex from "antd/es/flex";
 import { AppDispatch, RootState } from "@/app/providers/store/store";
+
 
 const Events = memo(() => {
     const dispatch = useDispatch<AppDispatch>();
@@ -48,7 +49,7 @@ const Events = memo(() => {
             return isLoading ? <h2>Загрузка...</h2> : <h2>Мероприятий нет</h2>;
         }
 
-        return eventList.map((e: any) => (
+        return eventList.map((e: FetchGetEventsData) => (
             <Event
                 event={e.event}
                 key={e.event.id}

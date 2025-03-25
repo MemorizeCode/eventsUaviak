@@ -9,7 +9,7 @@ interface EventProps {
   event: EventSchema
   openModal: () => void
   openModalGroup: () => void
-  mest: string
+  mest: number
   // closeModal: () =>void
 }
 

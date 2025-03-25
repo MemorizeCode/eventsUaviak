@@ -1,23 +1,23 @@
-import React, { Suspense } from 'react';
+// import React, { Suspense } from 'react';
 
-interface DynamicAntdProps {
-  // @ts-ignore
-  component: () => Promise<any>;
-  fallback?: React.ReactNode;
-  // @ts-ignore
-  [key: string]: any;
-}
+// interface DynamicAntdProps {
+//   // @ts-ignore
+//   component: () => Promise<any>;
+//   fallback?: React.ReactNode;
+//   // @ts-ignore
+//   [key: string]: any;
+// }
 
-export const DynamicAntd: React.FC<DynamicAntdProps> = ({ 
-  component: Component, 
-  fallback = <div>Loading...</div>,
-  ...props 
-}) => {
-  const LazyComponent = React.lazy(() => Component());
+// export const DynamicAntd: React.FC<DynamicAntdProps> = ({ 
+//   component: Component, 
+//   fallback = <div>Loading...</div>,
+//   ...props 
+// }) => {
+//   const LazyComponent = React.lazy(() => Component());
   
-  return (
-    <Suspense fallback={fallback}>
-      <LazyComponent {...props} />
-    </Suspense>
-  );
-}; 
+//   return (
+//     <Suspense fallback={fallback}>
+//       <LazyComponent {...props} />
+//     </Suspense>
+//   );
+// }; 

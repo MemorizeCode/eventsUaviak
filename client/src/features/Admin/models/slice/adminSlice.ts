@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { fetchAllSpecial } from '../service/fetchAllSpecial'
-import { fetchGetRecords } from '../service/fetchGetRecords'
+import { fetchGetRecords, FetchGetRecordsData, FetchGetRecordsResponse } from '../service/fetchGetRecords'
 import { fetchCreateEvents } from '../service/fetchCreateEvent'
 import { fetchDeleteEvent } from '../service/fetchDeleteEvent'
 import { FetchAllSpecialSchema } from '../types/fetchAllSpecail'
@@ -41,7 +41,7 @@ export const { reducer: allSpecialSliceReducer  } = allSpecialSlice
 const initialStateRecords = {
   isLoading: false,
   error: "",
-  records: [],
+  records: [] as FetchGetRecordsData[],
   message: ""
 }
 
@@ -55,12 +55,12 @@ export const recordsSlice = createSlice({
     builder.addCase(fetchGetRecords.pending, (state)=>{
       state.isLoading = true
     }),
-    builder.addCase(fetchGetRecords.fulfilled, (state, action) => {
-      state.records = action.payload.reverse()
+    builder.addCase(fetchGetRecords.fulfilled, (state, action: PayloadAction<FetchGetRecordsResponse>) => {
+      state.records = action.payload.data
     }),
-    builder.addCase(fetchGetRecords.rejected, (state, action) => {
+    builder.addCase(fetchGetRecords.rejected, (state) => {
       state.isLoading = false
-      state.error = action.payload
+      // state.error = action.payload
     })
   }
 })

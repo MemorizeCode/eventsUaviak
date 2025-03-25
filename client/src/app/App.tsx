@@ -4,10 +4,11 @@ import NavBar from "@/widget/Navbar/NavBar"
 import Layout from "antd/es/layout";
 import { useDispatch } from "react-redux";
 import { fetchIsAuth } from "@/entities/User/model/service/fetchIsAuth";
+import { AppDispatch } from "./providers/store/store";
 
 const { Content, Header } = Layout;
 const App = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(()=>{
     dispatch(fetchIsAuth())

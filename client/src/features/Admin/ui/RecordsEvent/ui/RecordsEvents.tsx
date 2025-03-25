@@ -1,5 +1,6 @@
-import { RootState } from "@/app/providers/store/store";
+import { AppDispatch, RootState } from "@/app/providers/store/store";
 import { fetchGetRecords } from "@/features/Admin";
+import { FetchGetRecordsData } from "@/features/Admin/models/service/fetchGetRecords";
 import Card from "antd/es/card";
 import Table from "antd/es/table";
 import Typography from "antd/es/typography";
@@ -10,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 const { Title } = Typography;
 
 const RecordsEvents = memo(() => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch<AppDispatch>()
     const records = useSelector((state: RootState) => state?.recordsEvents?.records)
     // const message = useSelector((state: RootState) => state?.recordsEvents?.message)
     const columns = [
@@ -37,7 +38,7 @@ const RecordsEvents = memo(() => {
             title: "Дата записи",
             dataIndex: 'recordDate',
             key: 'recordDate',
-            render: (_: string, action: any) => {
+            render: (_: string, action: FetchGetRecordsData) => {
                 const splitData = action.recordDate?.split('T')[0].split('-');
                 return `${splitData[2]}.${splitData[1]}.${splitData[0]}`
             }
@@ -56,7 +57,7 @@ const RecordsEvents = memo(() => {
             title: "Мероприятие",
             dataIndex: 'events',
             key: 'events',
-            render: (_: string, action: any) => {
+            render: (_: string, action: FetchGetRecordsData) => {
                 return action.eventsTitle
             }
         },
@@ -64,7 +65,7 @@ const RecordsEvents = memo(() => {
             title: "Дата мероприятия",
             dataIndex: 'date',
             key: 'date',
-            render: (_: string, action: any) => {
+            render: (_: string, action: FetchGetRecordsData) => {
                 const splitData = action.eventsDate?.split('T')[0].split('-');
                 return `${splitData[2]}.${splitData[1]}.${splitData[0]}`
             }
@@ -78,7 +79,7 @@ const RecordsEvents = memo(() => {
             title: "Статус",
             dataIndex: "status",
             key: 'status',
-            render: (_: string, action: any) => {
+            render: (_: string, action: FetchGetRecordsData) => {
                 const recordDate = new Date(action.recordDate)
                 const eventDate = new Date(action.eventsDate)
                 if (recordDate > eventDate) {

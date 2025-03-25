@@ -12,6 +12,10 @@ export const RegisterPage: FC = () => {
     const navigate = useNavigate()
 
     async function register() {
+        if(login.length < 6 || password.length < 6){
+            message.error("Логин и пароль должны быть больше 6 символов")
+            return
+        }
         const response = await $api.post("/auth/register", {
             login,password
         })

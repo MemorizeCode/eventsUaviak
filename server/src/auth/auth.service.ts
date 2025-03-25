@@ -30,6 +30,10 @@ export class AuthService {
         throw new BadRequestException('Пароль обязателен');
       }
 
+      if (login.length < 6 || password.length < 6) {
+        throw new BadRequestException('Логин и пароль должны быть больше 6 символов');
+      }
+
       const user = await this.prisma.user.findUnique({
         where: { login: login.trim() },
       });
@@ -48,6 +52,10 @@ export class AuthService {
         this.jwt.generateAccessToken(payload),
         this.jwt.generateRefreshToken(payload),
       ]);
+
+      if(user.role !== 'ADMIN'){
+        throw new UnauthorizedException('Вы не являетесь администратором');
+      }
 
       return {
         message: 'Авторизация успешна',
@@ -72,6 +80,10 @@ export class AuthService {
 
       if (!password) {
         throw new BadRequestException('Пароль обязателен');
+      }
+
+      if (login.length < 6 || password.length < 6) {
+        throw new BadRequestException('Логин и пароль должны быть больше 6 символов');
       }
 
       const existingUser = await this.prisma.user.findUnique({

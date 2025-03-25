@@ -4,7 +4,7 @@ import AuthForm from "@/features/AuthUser/ui/AuthForm";
 const LoginPage = () => {
 
     return (
-        <Card bordered title="Войти в мега секретную админку" className={styles.box}>
+        <Card bordered title="Войти в админку" className={styles.box}>
             <AuthForm />
         </Card>
 

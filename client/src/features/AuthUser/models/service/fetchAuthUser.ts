@@ -23,6 +23,12 @@ interface AuthUserParams {
 export const fetchAuthUser = createAsyncThunk<AuthUserResponse, AuthUserParams, { rejectValue: AuthUserError }>("authUser",
     async ({login,password}:AuthUserParams, thunkAPI) =>{
         try{
+            if(login.length < 6 || password.length < 6){
+                return thunkAPI.rejectWithValue({
+                    message: "Логин и пароль должны быть больше 6 символов",
+                    error: 'error'
+                })
+            }
             const response = await $api.post<AuthUserResponse>("/auth/login",{
                 login,password
             })

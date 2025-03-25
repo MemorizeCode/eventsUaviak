@@ -62,6 +62,18 @@ export class EventsService {
       if (!Number(body.id)) {
         throw new HttpException('Нету id мероприятия', HttpStatus.BAD_REQUEST);
       }
+
+      const event = await this.prisma.events.findUnique({
+        where: { id: Number(body.id) },
+        select: {
+          isDelete: true,
+        },
+      });
+
+      if (event.isDelete) {
+        throw new HttpException('Мероприятие удалено', HttpStatus.NOT_FOUND);
+      }
+
       const updateData: any = {};
 
       if (body.title) updateData.title = String(body.title);
@@ -115,7 +127,7 @@ export class EventsService {
         },
       });
       const [recordInv, recordGr] = await Promise.all([
-        this.prisma.recordGroup.findMany({
+        this.prisma.recordInvididual.findMany({
           where: { eventsId: Number(id) },
         }),
         this.prisma.recordGroup.findMany({
@@ -165,6 +177,9 @@ export class EventsService {
         include: { eventSpeciality: true },
         take: limit,
         skip: (page - 1) * limit,
+        orderBy: {
+          id: 'desc' 
+        }
       });
 
       if (events.length === 0) {
@@ -200,7 +215,7 @@ export class EventsService {
         },
       });
 
-      return {data: result.reverse(), message: 'Мероприятия получены', total: total};
+      return {data: result, message: 'Мероприятия получены', total: total};
     } catch (e) {
       console.log(e);
       throw new HttpException(

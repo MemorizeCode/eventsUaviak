@@ -39,7 +39,8 @@ export const eventsSlice = createSlice({
         })
         builder.addCase(fetchGetEvents.fulfilled, (state, action: PayloadAction<FetchGetEventsResponse>) => {
             state.isLoading = false
-            state.eventList = [...state.eventList, ...action.payload?.data]
+            const newEvents = action.payload?.data.filter((event) => !state.eventList.some((e) => e.event.id === event.event.id))
+            state.eventList = [...state.eventList, ...newEvents]
             state.total = action.payload.total
         })
         builder.addCase(fetchGetEvents.rejected, (state, action) => {

@@ -255,9 +255,9 @@ export class RecordService {
         result.push(obj);
       }
       if (result.length) {
-        return result;
+        return {data: result.reverse(), message: 'Записи успешно получены'}
       }
-      return { message: 'Записей нету' };
+      return { message: 'Записей нету', data: [] };
     } catch (e) {
       console.log(e);
       if (e instanceof HttpException) {

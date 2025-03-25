@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
 const $api = axios.create({
   baseURL: `${import.meta.env.VITE_API_BACKEND}`,
@@ -22,7 +22,7 @@ $api.interceptors.response.use(
     if ((err.response.status === 403 || err.response.status === 401) && err.config && !err.config._isRetry) {
       originalRequest._isRetry = true;
       try {
-        const response = await axios.post<AxiosResponse, any>(
+        const response = await axios.post(
           `${import.meta.env.VITE_API_BACKEND}/auth/token`,
           {
             token: localStorage.getItem('refreshToken'),
