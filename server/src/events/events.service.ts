@@ -156,17 +156,19 @@ export class EventsService {
     }
   }
 
-  async getEvents() {
+  async getEvents(limit: number, page: number) {
     try {
       const events = await this.prisma.events.findMany({
         where: {
           isDelete: false,
         },
         include: { eventSpeciality: true },
+        take: limit,
+        skip: (page - 1) * limit,
       });
 
       if (events.length === 0) {
-        return { message: 'Нет мероприятий' };
+        return { message: 'Нет мероприятий', data: [] };
       }
 
       const result = await Promise.all(
@@ -191,8 +193,16 @@ export class EventsService {
         }),
       );
 
-      return result.reverse();
+
+      const total = await this.prisma.events.count({
+        where: {
+          isDelete: false,
+        },
+      });
+
+      return {data: result.reverse(), message: 'Мероприятия получены', total: total};
     } catch (e) {
+      console.log(e);
       throw new HttpException(
         'Ошибка при получении мероприятий',
         HttpStatus.INTERNAL_SERVER_ERROR,

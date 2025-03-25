@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Param,
   Post,
   Put,
   Query,
@@ -44,8 +45,12 @@ export class EventsController {
 
   @Get('/getEvents')
   @HttpCode(200)
-  async getAllEvents() {
-    const result = await this.eventsService.getEvents();
+  async getAllEvents(@Query() param) {
+    const { limit, page } = param;
+    const result = await this.eventsService.getEvents(
+      Number(limit),
+      Number(page),
+    );
     return result;
   }
 }

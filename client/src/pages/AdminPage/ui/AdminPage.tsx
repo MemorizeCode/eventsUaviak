@@ -50,12 +50,12 @@ const AdminPage = () => {
                     <DeleteEventsAsync />
                 </Suspense>
             </Flex>
-            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
+            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "50px" }}>
                 <Suspense fallback={<div>Loading delete reviews...</div>}>
                     <DeleteReviewsAsync />
                 </Suspense>
             </Flex>
-            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
+            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "50px" }}>
                 <Suspense fallback={<div>Loading edit special...</div>}>
                     <EditSpesialAsync />
                 </Suspense>
@@ -68,12 +68,12 @@ const AdminPage = () => {
                     <DeleteSpesialAsync />
                 </Suspense>
             </Flex>
-            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
+            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "50px" }}>
                 <Suspense fallback={<div>Loading records...</div>}>
                     <RecordsEventsAsync />
                 </Suspense>
             </Flex>
-            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "10px" }}>
+            <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "50px" }}>
                 <Suspense fallback={<div>Loading stats...</div>}>
                     <StatsEventAsync />
                 </Suspense>

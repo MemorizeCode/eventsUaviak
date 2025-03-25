@@ -9,6 +9,10 @@ export class RecordService {
 
   async createInvididualRecord(body: RecordInvididualDto) {
     try {
+      if(!body.firstName || !body.lastName || !body.surname || !body.school || !body.class || !body.telephoneNumber || !body.eventsId){
+        throw new HttpException('Не все поля заполнены', HttpStatus.BAD_REQUEST);
+      }
+
       const event = await this.prisma.events.findUnique({
         where: {
           id: Number(body.eventsId),
@@ -16,6 +20,18 @@ export class RecordService {
       });
 
       if (event) {
+        //проверка уже существующих записей
+        const isRecord = await this.prisma.recordInvididual.findFirst({
+          where: {
+            eventsId: Number(body.eventsId),
+            telephoneNumber: String(body.telephoneNumber),
+          },
+        });
+
+        if(isRecord){
+          throw new HttpException('Такой номер телефона уже записан', HttpStatus.BAD_REQUEST);
+        }
+
         const [records, recordGr] = await Promise.all([
           await this.prisma.recordInvididual.findMany({
             where: {
@@ -80,12 +96,28 @@ export class RecordService {
 
   async createGroupRecord(body: RecordGroupDTO, file) {
     try {
+      if(!body.firstNameAttendant || !body.lastNameAttendant || !body.surnameAttendant || !body.school || !body.class || !body.countPeople || !body.phone || !body.eventsId){
+        throw new HttpException('Не все поля заполнены', HttpStatus.BAD_REQUEST);
+      }
+
       const event = await this.prisma.events.findUnique({
         where: {
           id: Number(body.eventsId),
         },
       });
       if (event) {
+        //проверка уже существующих записей
+        const isRecord = await this.prisma.recordGroup.findFirst({
+          where: {
+            eventsId: Number(body.eventsId),
+            phone: body.phone,
+          },
+        });
+        
+        if(isRecord){
+          throw new HttpException('Такой номер телефона уже записан', HttpStatus.BAD_REQUEST);
+        }
+
         const [records, recordGr] = await Promise.all([
           await this.prisma.recordInvididual.findMany({
             where: {
@@ -165,9 +197,11 @@ export class RecordService {
             phone: true,
             school: true,
             countPeople: true,
+            createdAt: true,
             events: {
               select: {
                 title: true,
+                date: true,
               },
             },
           },
@@ -181,9 +215,11 @@ export class RecordService {
             lastName: true,
             surname: true,
             school: true,
+            createdAt: true,
             events: {
               select: {
                 title: true,
+                date: true,
               },
             },
           },
@@ -197,7 +233,9 @@ export class RecordService {
           phone: recordGroup[key].phone,
           school: recordGroup[key].school,
           countPeople: recordGroup[key].countPeople,
-          events: recordGroup[key].events.title,
+          eventsTitle: recordGroup[key].events.title,
+          eventsDate: recordGroup[key].events.date,
+          recordDate: recordGroup[key].createdAt,
           type: 'Групповая',
         };
         result.push(obj);
@@ -209,7 +247,9 @@ export class RecordService {
           school: allRecordsInv[key].school,
           phone: allRecordsInv[key].telephoneNumber,
           countPeople: 1,
-          events: allRecordsInv[key].events.title,
+          eventsTitle: allRecordsInv[key].events.title,
+          eventsDate: allRecordsInv[key].events.date,
+          recordDate: allRecordsInv[key].createdAt,
           type: 'Инвидидуальная',
         };
         result.push(obj);

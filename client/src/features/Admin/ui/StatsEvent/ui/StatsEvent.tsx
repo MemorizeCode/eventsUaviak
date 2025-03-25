@@ -8,7 +8,7 @@ import Input from "antd/es/input";
 import Select from "antd/es/select";
 import Tag from "antd/es/tag";
 import Typography from "antd/es/typography";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const StatsEvent = memo(() => {
@@ -25,12 +25,12 @@ const StatsEvent = memo(() => {
 
     useEffect(() => {
         dispatch(fetchGetStatsEventsYear({ yearStats }))
-    }, [dispatch,yearStats])
+    }, [dispatch, yearStats])
 
 
     useEffect(() => {
         dispatch(fetchGetStatsEventMount({ year: Number(yearStats), month: Number(monthStats) }))
-    }, [monthStats, yearStats,dispatch])
+    }, [monthStats, yearStats, dispatch])
 
 
     useEffect(() => {
@@ -38,7 +38,7 @@ const StatsEvent = memo(() => {
         dispatch(fetchGetStatsEventPopularSpecial())
     }, [dispatch])
 
-    
+
 
     const months = [
         { id: 1, month: "Январь" },
@@ -56,31 +56,47 @@ const StatsEvent = memo(() => {
     ];
 
 
+    const mountsMemo = useMemo(() =>
+        months.map((m) => (
+            <Select.Option key={m.id} value={m.id}>{m.month}</Select.Option>
+        ))
+        , [months])
+
+
     return (<>
         <Card>
             <Title level={2}>Статистика мероприятий</Title>
-            <Title level={3}>Статистика по году: {yearStats} | Людей посетило: {peopleStatsYear}</Title>
-            <Input
-                value={yearStats}
-                type="text"
-                onChange={e => setYearStats(e.target.value)}
-            />
-            <Title level={3}>Статистика по месяцу: {months[Number(monthStats) - 1].month} и году: {yearStats} | Людей посетило: {peopleStatsMonth}</Title>
-            <Select
-                value={monthStats}
-                onChange={e => setMonthStats(e)}
-            >
-                {months.map(month => <Select.Option key={month.id} value={month.id}>{month.month}</Select.Option>)}
-            </Select>
-            <Title level={3}>Список школ посетивших мероприятие:</Title>
-            {
-                listSchool.length > 0 && 
-                listSchool.map((school: School) => <Tag key={school.id}>{school.school}</Tag>)
-            }
-            <Title level={3}>Наиболее востребованная специальность:</Title>
-            <p>Название: {mostPopularSpecialty.title}</p>
-            <p>Количество зарегистрировавшихся: {mostPopularSpecialty.totalRegistrations}</p>
-            <p>Количество мероприятий: {mostPopularSpecialty.eventsCount}</p>
+            <div style={{ marginTop: "20px" }}>
+                <Title level={3}>Статистика по году: {yearStats} | Людей посетило: {peopleStatsYear}</Title>
+                <Input
+                    value={yearStats}
+                    type="text"
+                    onChange={e => setYearStats(e.target.value)}
+                />
+            </div>
+            <div style={{ marginTop: "20px" }}>
+                <Title level={3}>Статистика по месяцу: {months[Number(monthStats) - 1].month} и году: {yearStats} | Людей посетило: {peopleStatsMonth}</Title>
+                <Select
+                    value={monthStats}
+                    onChange={e => setMonthStats(e)}
+                >
+                    {mountsMemo}
+                </Select>
+            </div>
+            <div style={{ marginTop: "20px" }}>
+                <Title level={3}>Список школ посетивших мероприятие:</Title>
+                {
+                    listSchool.length > 0 &&
+                    listSchool.map((school: School) => <Tag key={school.id}>{school.school}</Tag>)
+                }
+            </div>
+            <div style={{ marginTop: "20px" }}>
+                <Title level={3}>Наиболее востребованная специальность:</Title>
+                <p>Название: {mostPopularSpecialty.title}</p>
+                <p>Количество зарегистрировавшихся/посетивших: {mostPopularSpecialty.totalRegistrations}</p>
+                <p>Количество мероприятий: {mostPopularSpecialty.eventsCount}</p>
+
+            </div>
         </Card>
     </>);
 })

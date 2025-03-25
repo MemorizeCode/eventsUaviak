@@ -29,8 +29,17 @@ const RecordsEvents = memo(() => {
             dataIndex: 'phone',
             key: 'phone',
             render: (text: string) => {
-                const templatePhone = `${text.slice(0, 1)}-${text.slice(1, 4)}-${text.slice(4, 7)}-${text.slice(7, 9)}-${text.slice(9, 11)}` 
+                const templatePhone = `${text.slice(0, 1)}-${text.slice(1, 4)}-${text.slice(4, 7)}-${text.slice(7, 9)}-${text.slice(9, 11)}`
                 return <p>{templatePhone}</p>
+            }
+        },
+        {
+            title: "Дата записи",
+            dataIndex: 'recordDate',
+            key: 'recordDate',
+            render: (_: string, action: any) => {
+                const splitData = action.recordDate?.split('T')[0].split('-');
+                return `${splitData[2]}.${splitData[1]}.${splitData[0]}`
             }
         },
         {
@@ -46,13 +55,38 @@ const RecordsEvents = memo(() => {
         {
             title: "Мероприятие",
             dataIndex: 'events',
-            key: 'events'
+            key: 'events',
+            render: (_: string, action: any) => {
+                return action.eventsTitle
+            }
+        },
+        {
+            title: "Дата мероприятия",
+            dataIndex: 'date',
+            key: 'date',
+            render: (_: string, action: any) => {
+                const splitData = action.eventsDate?.split('T')[0].split('-');
+                return `${splitData[2]}.${splitData[1]}.${splitData[0]}`
+            }
         },
         {
             title: "Тип",
             dataIndex: "type",
             key: 'type'
         },
+        {
+            title: "Статус",
+            dataIndex: "status",
+            key: 'status',
+            render: (_: string, action: any) => {
+                const recordDate = new Date(action.recordDate)
+                const eventDate = new Date(action.eventsDate)
+                if (recordDate > eventDate) {
+                    return <p style={{ color: "red" }}>Мероприятие прошло</p>
+                }
+                return <p style={{ color: "green" }}>Мероприятие будет</p>
+            }
+        }
         // {
         //     title: "Действие",
         //     dataIndex: "action",
@@ -72,10 +106,9 @@ const RecordsEvents = memo(() => {
     return (<>
         <Card style={{ minWidth: "500px" }}>
             <Title level={2}>Записи на мероприятия</Title>
-            
             {records && Array.isArray(records) && records.length > 0 ?
                 <Table rowKey="id" columns={columns} dataSource={records} />
-            :
+                :
                 <p>Записей нет</p>
             }
         </Card>

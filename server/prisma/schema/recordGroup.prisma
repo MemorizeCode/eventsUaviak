@@ -8,7 +8,7 @@ model RecordGroup {
     phone String
     countPeople Int //Не более указанного????
     listPeople String //Путь до файлаа
-    
+    createdAt DateTime @default(now())
 
     //на какой записались
     events Events @relation(fields: [eventsId], references: [id])

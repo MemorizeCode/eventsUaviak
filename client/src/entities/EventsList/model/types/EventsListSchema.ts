@@ -19,6 +19,7 @@ export interface EventSchema {
     prepod: string 
     whoClasses: string
     eventSpeciality: {
+        id: number
         title: string
     }
 }

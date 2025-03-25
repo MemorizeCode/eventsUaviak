@@ -10,6 +10,7 @@ model Events {
     whoClasses String
     isDelete Boolean @default(false)
     prepod String 
+    createdAt DateTime @default(now())
     //Связи
     eventSpeciality EventSpeciality @relation(fields: [specialityId], references:[id])
     specialityId Int

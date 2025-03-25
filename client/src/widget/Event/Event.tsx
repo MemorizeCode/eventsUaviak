@@ -4,7 +4,7 @@ import Card from "antd/es/card";
 import Button from "antd/es/button";
 import Typography from "antd/es/typography";
 import styles from "./Event.module.css"
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 interface EventProps {
   event: EventSchema
   openModal: () => void
@@ -14,7 +14,7 @@ interface EventProps {
 }
 
 
-const EventOne = ({ event, openModal, openModalGroup, mest }: EventProps) => {
+const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) => {
 
   const { Title, Paragraph } = Typography;
 
@@ -58,13 +58,19 @@ const EventOne = ({ event, openModal, openModalGroup, mest }: EventProps) => {
     backgroundColor: '#456b92',
   }), []);
 
+  const memoizedDescription = useMemo(() => (
+    <Paragraph style={paragraphStyle}>{event.description}</Paragraph>
+  ), [event.description, paragraphStyle]);
 
+  const memoizedMest = useMemo(() => (
+    <Paragraph style={paragraphDetailsStyle}><strong>Осталось мест:</strong> {mest}</Paragraph>
+  ), [mest, paragraphDetailsStyle]);
 
   return (
     <Card className={styles.eventCard}>
       <div className={styles.content}>
         <Title level={4} style={titleStyle}>{event.title}</Title>
-        <Paragraph style={paragraphStyle}>{event.description}</Paragraph>
+        {memoizedDescription}
 
         <div style={contentStyle}>
           <Title level={5} style={detailsTitleStyle}>Детали мероприятия</Title>
@@ -74,7 +80,7 @@ const EventOne = ({ event, openModal, openModalGroup, mest }: EventProps) => {
           <Paragraph style={paragraphDetailsStyle}><strong>Кабинет:</strong> {event.cabinet}</Paragraph>
           <Paragraph style={paragraphDetailsStyle}><strong>Преподаватель:</strong> {event.prepod}</Paragraph>
           <Paragraph style={paragraphDetailsStyle}><strong>Количество мест:</strong> {event.people_count}</Paragraph>
-          <Paragraph style={paragraphDetailsStyle}><strong>Осталось мест:</strong> {mest}</Paragraph>
+          {memoizedMest}
           <Paragraph style={paragraphDetailsStyle}><strong>Для классов:</strong> {event.whoClasses}</Paragraph>
           <Paragraph style={paragraphDetailsStyle}><strong>Специальность:</strong> {event.eventSpeciality.title}</Paragraph>
           <small style={smallStyle}><strong>ID:</strong> {event.id}</small>
@@ -102,7 +108,7 @@ const EventOne = ({ event, openModal, openModalGroup, mest }: EventProps) => {
       </div>
     </Card>
   );
-};
+})
 
 
 export default EventOne;

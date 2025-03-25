@@ -1,9 +1,10 @@
 
 import $api from "@/app/config/api";
-import { Button, Input, message } from "antd";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import Input from "antd/es/input";
+import Button from "antd/es/button";
+import message from "antd/es/message";
 export const RegisterPage: FC = () => {
     const [login, setLogin] = useState('')
     const [password, setPassword] = useState('')

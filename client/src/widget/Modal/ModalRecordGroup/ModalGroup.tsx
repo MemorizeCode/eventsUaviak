@@ -97,6 +97,16 @@ const ModalGroup = memo(({ isOpen, closeModal, idEvent }: ModalGroupProps) => {
         form.resetFields();
         setFileList([]);
         closeModal();
+        setFormData({
+          firstNameAttendant: "",
+          lastNameAttendant: "",
+          surnameAttendant: "",
+          school: "",
+          tel: "",
+          classSchool: "",
+          countPeople: null,
+        });
+        setFileList([]);
         message.success(payload.message);
       } 
       else if (payload.error == "warning") {
