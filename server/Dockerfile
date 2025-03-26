@@ -12,6 +12,7 @@ RUN npm install
 #Генерация клиента Prisma, хз мб понадобится
 RUN npx prisma generate
 
+
 # # Миграции
 # RUN npx prisma migrate deploy
 
