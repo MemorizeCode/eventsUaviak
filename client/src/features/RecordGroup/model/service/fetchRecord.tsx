@@ -62,7 +62,7 @@ export const fetchRecordGr = createAsyncThunk<RecordGroupResponse, RecordGroupPa
       }
       if (tel) {
         const phoneValid = /^[0-9]+$/;
-        if(!phoneValid.test(tel) || tel.length < 11){
+        if(!phoneValid.test(tel) || tel.length != 11){
           return thunkAPI.rejectWithValue({ message: "Неверный номер телефона", error: "warning"})
 
         }

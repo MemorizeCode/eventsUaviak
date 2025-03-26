@@ -178,8 +178,8 @@ export class EventsService {
         take: limit,
         skip: (page - 1) * limit,
         orderBy: {
-          id: 'desc' 
-        }
+          id: 'desc',
+        },
       });
 
       if (events.length === 0) {
@@ -208,14 +208,13 @@ export class EventsService {
         }),
       );
 
-
       const total = await this.prisma.events.count({
         where: {
           isDelete: false,
         },
       });
 
-      return {data: result, message: 'Мероприятия получены', total: total};
+      return { data: result, message: 'Мероприятия получены', total: total };
     } catch (e) {
       console.log(e);
       throw new HttpException(

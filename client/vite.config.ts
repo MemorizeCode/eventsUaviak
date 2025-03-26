@@ -18,12 +18,17 @@ export default defineConfig({
           ['import', {
             libraryName: 'antd',
             libraryDirectory: 'es',
-            style: true, // Можно переключить на false, если стили кастомные
+            style: true,
           }],
         ],
       },
     }),
   ],
+  optimizeDeps: {
+    exclude: [
+      '@million/lint',
+    ],
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

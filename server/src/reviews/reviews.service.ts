@@ -14,7 +14,11 @@ export class ReviewsService {
           HttpStatus.BAD_REQUEST,
         );
       }
-      if (Number(body.stars) >= 4 || secretKey === 'hi_developer_sorry_for_the_bad_code_thats_how_it_should_be') {
+      if (
+        Number(body.stars) >= 4 ||
+        secretKey ===
+          'hi_developer_sorry_for_the_bad_code_thats_how_it_should_be'
+      ) {
         await this.prisma.reviews.create({
           data: {
             title: body.reviews,
@@ -40,7 +44,7 @@ export class ReviewsService {
     try {
       const reviews = await this.prisma.reviews.findMany();
       if (reviews) {
-        return {data:reviews.reverse()};
+        return { data: reviews.reverse() };
       }
       return { message: 'Отзывов нет.' };
     } catch (e) {

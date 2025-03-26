@@ -9,8 +9,26 @@ export class RecordService {
 
   async createInvididualRecord(body: RecordInvididualDto) {
     try {
-      if(!body.firstName || !body.lastName || !body.surname || !body.school || !body.class || !body.telephoneNumber || !body.eventsId){
-        throw new HttpException('Не все поля заполнены', HttpStatus.BAD_REQUEST);
+      if (body.telephoneNumber.length != 11) {
+        console.log(body.telephoneNumber.length);
+        throw new HttpException(
+          'Не верный номер телефона',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (
+        !body.firstName ||
+        !body.lastName ||
+        !body.surname ||
+        !body.school ||
+        !body.class ||
+        !body.telephoneNumber ||
+        !body.eventsId
+      ) {
+        throw new HttpException(
+          'Не все поля заполнены',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const event = await this.prisma.events.findUnique({
@@ -28,8 +46,11 @@ export class RecordService {
           },
         });
 
-        if(isRecord){
-          throw new HttpException('Такой номер телефона уже записан', HttpStatus.BAD_REQUEST);
+        if (isRecord) {
+          throw new HttpException(
+            'Такой номер телефона уже записан',
+            HttpStatus.BAD_REQUEST,
+          );
         }
 
         const [records, recordGr] = await Promise.all([
@@ -96,8 +117,26 @@ export class RecordService {
 
   async createGroupRecord(body: RecordGroupDTO, file) {
     try {
-      if(!body.firstNameAttendant || !body.lastNameAttendant || !body.surnameAttendant || !body.school || !body.class || !body.countPeople || !body.phone || !body.eventsId){
-        throw new HttpException('Не все поля заполнены', HttpStatus.BAD_REQUEST);
+      if (body.phone.length != 11) {
+        throw new HttpException(
+          'Не верный номер телефона',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      if (
+        !body.firstNameAttendant ||
+        !body.lastNameAttendant ||
+        !body.surnameAttendant ||
+        !body.school ||
+        !body.class ||
+        !body.countPeople ||
+        !body.phone ||
+        !body.eventsId
+      ) {
+        throw new HttpException(
+          'Не все поля заполнены',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const event = await this.prisma.events.findUnique({
@@ -113,9 +152,12 @@ export class RecordService {
             phone: body.phone,
           },
         });
-        
-        if(isRecord){
-          throw new HttpException('Такой номер телефона уже записан', HttpStatus.BAD_REQUEST);
+
+        if (isRecord) {
+          throw new HttpException(
+            'Такой номер телефона уже записан',
+            HttpStatus.BAD_REQUEST,
+          );
         }
 
         const [records, recordGr] = await Promise.all([
@@ -186,9 +228,49 @@ export class RecordService {
 
   async getRecords() {
     try {
-      const result = [];
+      // const allRecords = await this.prisma.events.findMany({
+      //   select: {
+      //     id: true,
+      //     title: true,
+      //     date: true,
+      //     recordInv: {
+      //       select: {
+      //         id: true,
+      //         telephoneNumber: true,
+      //         firstName: true,
+      //         lastName: true,
+      //         surname: true,
+      //         school: true,
+      //         createdAt: true,
+      //       },
+      //       orderBy: {
+      //         id: 'desc'
+      //       }
+      //     },
+      //     recordGr: {
+      //       select: {
+      //         id: true,
+      //         firstNameAttendant: true,
+      //         lastNameAttendant: true,
+      //         SurnameAttendant: true,
+      //         phone: true,
+      //         school: true,
+      //         countPeople: true,
+      //         createdAt: true,
+      //       },
+      //       orderBy: {
+      //         id: 'desc'
+      //       }
+      //     }},
+      //     // orderBy: {
+      //     //   createdAt: 'desc'
+      //     // }
+      // })
+
+      // const filterRecords = allRecords.filter(item => item.recordInv.length > 0 || item.recordGr.length > 0)
+
       const [recordGroup, allRecordsInv] = await Promise.all([
-        await this.prisma.recordGroup.findMany({
+        this.prisma.recordGroup.findMany({
           select: {
             id: true,
             firstNameAttendant: true,
@@ -205,9 +287,11 @@ export class RecordService {
               },
             },
           },
+          orderBy: {
+            createdAt: 'desc',
+          },
         }),
-
-        await this.prisma.recordInvididual.findMany({
+        this.prisma.recordInvididual.findMany({
           select: {
             id: true,
             telephoneNumber: true,
@@ -223,39 +307,41 @@ export class RecordService {
               },
             },
           },
+          orderBy: {
+            createdAt: 'desc',
+          },
         }),
       ]);
 
-      for (const key in recordGroup) {
-        const obj = {
-          id: recordGroup[key].id,
-          name: `${recordGroup[key].lastNameAttendant} ${recordGroup[key].firstNameAttendant} ${recordGroup[key].SurnameAttendant}`,
-          phone: recordGroup[key].phone,
-          school: recordGroup[key].school,
-          countPeople: recordGroup[key].countPeople,
-          eventsTitle: recordGroup[key].events.title,
-          eventsDate: recordGroup[key].events.date,
-          recordDate: recordGroup[key].createdAt,
-          type: 'Групповая',
-        };
-        result.push(obj);
-      }
-      for (const key in allRecordsInv) {
-        const obj = {
-          id: allRecordsInv[key].id,
-          name: `${allRecordsInv[key].lastName} ${allRecordsInv[key].firstName} ${allRecordsInv[key].surname}`,
-          school: allRecordsInv[key].school,
-          phone: allRecordsInv[key].telephoneNumber,
-          countPeople: 1,
-          eventsTitle: allRecordsInv[key].events.title,
-          eventsDate: allRecordsInv[key].events.date,
-          recordDate: allRecordsInv[key].createdAt,
-          type: 'Инвидидуальная',
-        };
-        result.push(obj);
-      }
+      // Обработка групповых записей
+      const groupRecords = recordGroup.map((record) => ({
+        id: record.id,
+        name: `${record.lastNameAttendant} ${record.firstNameAttendant} ${record.SurnameAttendant}`,
+        phone: record.phone,
+        school: record.school,
+        countPeople: record.countPeople,
+        eventsTitle: record.events.title,
+        eventsDate: record.events.date,
+        recordDate: record.createdAt,
+        type: 'Групповая',
+      }));
+
+      // Обработка индивидуальных записей
+      const individualRecords = allRecordsInv.map((record) => ({
+        id: record.id,
+        name: `${record.lastName} ${record.firstName} ${record.surname}`,
+        phone: record.telephoneNumber,
+        school: record.school,
+        countPeople: 1,
+        eventsTitle: record.events.title,
+        eventsDate: record.events.date,
+        recordDate: record.createdAt,
+        type: 'Индивидуальная', // Исправлена опечатка
+      }));
+
+      const result = [...groupRecords, ...individualRecords];
       if (result.length) {
-        return {data: result.reverse(), message: 'Записи успешно получены'}
+        return { data: result, message: 'Записи успешно получены' };
       }
       return { message: 'Записей нету', data: [] };
     } catch (e) {

@@ -44,7 +44,7 @@ export const fetchRecord = createAsyncThunk<RecordResponse, RecordParams, { reje
             }
             if (telephone) {
                 const phoneValid = /^[0-9]+$/;
-                if(!phoneValid.test(telephone) || telephone.length < 11){
+                if(!phoneValid.test(telephone) || telephone.length != 11){
                   return thunkAPI.rejectWithValue({ message: "Неверный номер телефона", error: "warning"})
                 }
               }

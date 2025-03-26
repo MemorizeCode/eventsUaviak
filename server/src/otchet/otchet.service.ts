@@ -7,27 +7,39 @@ export class OtchetService {
 
   async getPeopleYear(year) {
     try {
-      const [dataI, dataG] = await Promise.all([
-        await this.prisma.recordInvididual.findMany({
+      const [dataInv, dataGr] = await Promise.all([
+        this.prisma.recordInvididual.findMany({
           where: {
             events: {
-              date: {
-                gte: new Date(Number(year), 0, 1), // Больше или равно 1 января 2024 года
-                lte: new Date(Number(year), 11, 31), // Меньше или равно 31 декабря 2024 года
+              is: {
+                date: {
+                  gte: new Date(Number(year), 0, 1),
+                  lte: new Date(Number(year), 11, 31),
+                },
               },
+            },
+            createdAt: {
+              gte: new Date(Number(year), 0, 1),
+              lte: new Date(Number(year), 11, 31),
             },
           },
           include: {
             events: true,
           },
         }),
-        await this.prisma.recordGroup.findMany({
+        this.prisma.recordGroup.findMany({
           where: {
             events: {
-              date: {
-                gte: new Date(Number(year), 0, 1), // Больше или равно 1 января 2024 года
-                lte: new Date(Number(year), 11, 31), // Меньше или равно 31 декабря 2024 года
+              is: {
+                date: {
+                  gte: new Date(Number(year), 0, 1),
+                  lte: new Date(Number(year), 11, 31),
+                },
               },
+            },
+            createdAt: {
+              gte: new Date(Number(year), 0, 1),
+              lte: new Date(Number(year), 11, 31),
             },
           },
           include: {
@@ -35,14 +47,21 @@ export class OtchetService {
           },
         }),
       ]);
-      const dataGL = dataG.reduce((acc, rec) => {
+
+      const filterDataInv = dataInv.filter((e) => e.events.date < new Date());
+      const filterDataGr = dataGr.filter((e) => e.events.date < new Date());
+
+      const dataSvobodnoMesInGroup = filterDataGr.reduce((acc, rec) => {
         const count = Number(rec.countPeople) || 0;
         return count + acc;
       }, 0);
 
-      return { data: dataI.length + dataGL };
+      const dataSvobodnoMesInIndividual = filterDataInv.length;
+      const dataSvobodnoMes =
+        dataSvobodnoMesInGroup + dataSvobodnoMesInIndividual;
+
+      return { data: dataSvobodnoMes };
     } catch (e) {
-      console.log(e);
       if (e instanceof HttpException) {
         throw e;
       }
@@ -58,27 +77,39 @@ export class OtchetService {
       if (!m || !y) {
         throw new HttpException('Нету месяца или года', HttpStatus.BAD_REQUEST);
       }
-      const [dataI, dataG] = await Promise.all([
-        await this.prisma.recordInvididual.findMany({
+      const [dataInv, dataGr] = await Promise.all([
+        this.prisma.recordInvididual.findMany({
           where: {
             events: {
-              date: {
-                gte: new Date(Number(y), Number(m - 1), 1),
-                lte: new Date(Number(y), Number(m - 1), 31),
+              is: {
+                date: {
+                  gte: new Date(Number(y), Number(m - 1), 1),
+                  lte: new Date(Number(y), Number(m - 1), 31),
+                },
               },
+            },
+            createdAt: {
+              gte: new Date(Number(y), Number(m - 1), 1),
+              lte: new Date(Number(y), Number(m - 1), 31),
             },
           },
           include: {
             events: true,
           },
         }),
-        await this.prisma.recordGroup.findMany({
+        this.prisma.recordGroup.findMany({
           where: {
             events: {
-              date: {
-                gte: new Date(Number(y), Number(m - 1), 1),
-                lte: new Date(Number(y), Number(m - 1), 31),
+              is: {
+                date: {
+                  gte: new Date(Number(y), Number(m - 1), 1),
+                  lte: new Date(Number(y), Number(m), 31),
+                },
               },
+            },
+            createdAt: {
+              gte: new Date(Number(y), Number(m - 1), 1),
+              lte: new Date(Number(y), Number(m - 1), 31),
             },
           },
           include: {
@@ -87,12 +118,19 @@ export class OtchetService {
         }),
       ]);
 
-      const dataGL = dataG.reduce((acc, rec) => {
+      const filterDataInv = dataInv.filter((e) => e.events.date < new Date());
+      const filterDataGr = dataGr.filter((e) => e.events.date < new Date());
+
+      const dataSvobodnoMesInGroup = filterDataGr.reduce((acc, rec) => {
         const count = Number(rec.countPeople) || 0;
         return count + acc;
       }, 0);
 
-      return { data: dataI.length + dataGL };
+      const dataSvobodnoMesInIndividual = filterDataInv.length;
+      const dataSvobodnoMes =
+        dataSvobodnoMesInGroup + dataSvobodnoMesInIndividual;
+
+      return { data: dataSvobodnoMes };
     } catch (e) {
       console.log(e);
       if (e instanceof HttpException) {

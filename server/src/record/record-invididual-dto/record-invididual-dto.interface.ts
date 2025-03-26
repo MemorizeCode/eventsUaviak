@@ -4,6 +4,6 @@ export interface RecordInvididualDto {
   surname: string;
   school: string;
   class: string;
-  telephoneNumber: number;
+  telephoneNumber: string;
   eventsId: number;
 }
