@@ -63,7 +63,7 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
   ), [event.description, paragraphStyle]);
 
   const memoizedMest = useMemo(() => (
-    <Paragraph style={paragraphDetailsStyle}><strong>Осталось мест:</strong> {mest}</Paragraph>
+    <Paragraph style={paragraphDetailsStyle}><strong>Свободных мест:</strong> {mest}</Paragraph>
   ), [mest, paragraphDetailsStyle]);
 
   return (

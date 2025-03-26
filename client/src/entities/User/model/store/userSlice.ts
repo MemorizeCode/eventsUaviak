@@ -32,7 +32,7 @@ const userSlice = createSlice({
       state.auth = true
       state.role = payload.payload.role
       localStorage.setItem("accessToken", payload.payload.accessToken)
-      localStorage.setItem("refreshToken", payload.payload.refreshToken)
+      // localStorage.setItem("refreshToken", payload.payload.refreshToken)
     })
     builder.addCase(fetchIsAuth.rejected, (state)=>{
       state.isLoading = false

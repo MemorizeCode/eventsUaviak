@@ -31,6 +31,7 @@ const AdminPage = () => {
 
     async function loadSpecial() {
         const response = await $api.post('/loadSpecial')
+        dispatch(fetchAllSpecial())
         console.log(response)
     }
 

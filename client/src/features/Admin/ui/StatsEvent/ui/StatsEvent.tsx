@@ -92,7 +92,7 @@ const StatsEvent = memo(() => {
             </div>
             <div style={{ marginTop: "20px" }}>
                 <Title level={3}>Наиболее востребованная специальность:</Title>
-                <p>Название: {mostPopularSpecialty.title}</p>
+                <p>Название: {mostPopularSpecialty?.title}</p>
                 <p>Количество зарегистрировавшихся/посетивших: {mostPopularSpecialty.totalRegistrations}</p>
                 <p>Количество мероприятий: {mostPopularSpecialty.eventsCount}</p>
 

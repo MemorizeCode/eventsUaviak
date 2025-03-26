@@ -10,6 +10,7 @@ import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userSliceActions } from "@/entities/User/model/store/userSlice";
 import { RootState } from "@/app/providers/store/store";
+import $api from "@/app/config/api";
 
 const { Header } = Layout;
 
@@ -27,11 +28,15 @@ const NavBar = () => {
     setVisible(false);
   };
 
-  const logOut = () => {
-    dispatch(userSliceActions.setAuth(false));
-    dispatch(userSliceActions.setRole("USER"));
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+  const logOut = async () => {
+    try{
+      await $api.post('/auth/logout')
+      dispatch(userSliceActions.setAuth(false));
+      dispatch(userSliceActions.setRole("USER"));
+      localStorage.removeItem("accessToken");
+    }catch(error){
+      console.log("ошибка логаута")
+    }
   };
 
   //основа
@@ -44,6 +49,14 @@ const NavBar = () => {
       key: "2",
       label: <NavLink to="/reviews" style={{ fontSize: "16px" }}>ОТЗЫВЫ</NavLink>,
     },
+    ...(!auth
+      ? [
+        {
+          key: "8",
+          label: <NavLink to="/login" style={{ fontSize: "16px" }}>ВОЙТИ</NavLink>,
+        },
+      ]
+      : []),
     ...(auth && (role === "ADMIN" || role === "admin")
       ? [
         {
@@ -59,15 +72,7 @@ const NavBar = () => {
           ),
         },
       ]
-      : []),
-    ...(!auth
-      ? [
-        {
-          key: "5",
-          label: <NavLink to="/login">Войти в админку</NavLink>,
-        },
-      ]
-      : []),
+      : [])
   ];
 
   //адаптив

@@ -1,5 +1,5 @@
+import $api from "@/app/config/api";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 
 
 export interface FetchIsAuthResponse {
@@ -11,9 +11,7 @@ export interface FetchIsAuthResponse {
 
 export const fetchIsAuth = createAsyncThunk<FetchIsAuthResponse, void, { rejectValue: boolean }>("isAuth", async (_, { rejectWithValue }) => {
     try {
-        const response = await axios.post<FetchIsAuthResponse>(`${import.meta.env.VITE_API_BACKEND}/auth/token`, {
-            token: localStorage.getItem('refreshToken')
-        })
+        const response = await $api.post<FetchIsAuthResponse>(`/auth/token`)
         if (response.status === 200) {
             return response.data
         }

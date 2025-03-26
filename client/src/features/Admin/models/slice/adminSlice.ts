@@ -159,9 +159,9 @@ export const statsEventSlice = createSlice({
       state.listSchool = action.payload.data as []
     }),
     builder.addCase(fetchGetStatsEventPopularSpecial.fulfilled, (state, action) => {
-      state.mostPopularSpecialty.title = action.payload.data.title
-      state.mostPopularSpecialty.totalRegistrations = action.payload.data.totalRegistrations
-      state.mostPopularSpecialty.eventsCount = action.payload.data.eventsCount
+      state.mostPopularSpecialty.title = action.payload?.data?.title || "Нет информации"
+      state.mostPopularSpecialty.totalRegistrations = action.payload?.data?.totalRegistrations || 0
+      state.mostPopularSpecialty.eventsCount = action.payload?.data?.eventsCount || 0
     })
   }
 })
