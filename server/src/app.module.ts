@@ -37,11 +37,14 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         { path: '/api/events/createEvent', method: RequestMethod.POST },
+        { path: '/api/events/updateEvent', method: RequestMethod.PUT },
         { path: '/api/events/deleteEvent', method: RequestMethod.DELETE },
+        { path: '/api/record/getRecords', method: RequestMethod.GET },
         { path: '/api/reviews/deleteReviews', method: RequestMethod.DELETE },
         { path: '/api/spesial/createSpesial', method: RequestMethod.POST },
         { path: '/api/spesial/deleteSpesial', method: RequestMethod.DELETE },
-        { path: '/api/events/updateEvent', method: RequestMethod.PUT },
+        { path: '/api/spesial/updateSpecial', method: RequestMethod.PUT },
+        { path: '/api/spesial/newSpecial', method: RequestMethod.POST },
       );
   }
 }
