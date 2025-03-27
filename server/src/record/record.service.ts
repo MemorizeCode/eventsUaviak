@@ -210,7 +210,9 @@ export class RecordService {
           },
         });
         if (newRecord) {
-          return { message: 'Запись успешно создана' };
+          return {
+            message: `Запись успешно создана на мероприятие "${event.title}"`,
+          };
         }
       }
       throw new HttpException('Мероприятие не найдено', HttpStatus.NOT_FOUND);
