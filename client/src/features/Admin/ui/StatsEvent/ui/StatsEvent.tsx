@@ -67,35 +67,50 @@ const StatsEvent = memo(() => {
         <Card>
             <Title level={2}>Статистика мероприятий</Title>
             <div style={{ marginTop: "20px" }}>
-                <Title level={3}>Статистика по году: {yearStats} | Людей посетило: {peopleStatsYear}</Title>
+                <Title level={3}>
+                    За {yearStats} год: {peopleStatsYear} посетителей
+                </Title>
                 <Input
                     value={yearStats}
                     type="text"
-                    onChange={e => setYearStats(e.target.value)}
+                    placeholder="Введите год"
+                    onChange={(e) => setYearStats(e.target.value)}
                 />
             </div>
             <div style={{ marginTop: "20px" }}>
-                <Title level={3}>Статистика по месяцу: {months[Number(monthStats) - 1].month} и году: {yearStats} | Людей посетило: {peopleStatsMonth}</Title>
+                <Title level={3}>
+                    За {months[Number(monthStats) - 1].month} {yearStats} года: {peopleStatsMonth} посетителей
+                </Title>
                 <Select
+                    style={{ width: "100%" }}
                     value={monthStats}
-                    onChange={e => setMonthStats(e)}
+                    placeholder="Выберите месяц"
+                    onChange={(e) => setMonthStats(e)}
                 >
                     {mountsMemo}
                 </Select>
             </div>
             <div style={{ marginTop: "20px" }}>
-                <Title level={3}>Список школ посетивших мероприятие:</Title>
-                {
-                    listSchool.length > 0 &&
-                    listSchool.map((school: School) => <Tag key={school.id}>{school.school}</Tag>)
-                }
+                <Title level={3}>Школы, посетившие мероприятия:</Title>
+                {listSchool.length > 0 ? (
+                    listSchool.map((school: School) => (
+                        <Tag key={school.id}>{school.school}</Tag>
+                    ))
+                ) : (
+                    <p>Нет данных</p>
+                )}
             </div>
             <div style={{ marginTop: "20px" }}>
-                <Title level={3}>Наиболее востребованная специальность:</Title>
-                <p>Название: {mostPopularSpecialty?.title}</p>
-                <p>Количество зарегистрировавшихся/посетивших: {mostPopularSpecialty.totalRegistrations}</p>
-                <p>Количество мероприятий: {mostPopularSpecialty.eventsCount}</p>
-
+                <Title level={3}>Самая востребованная специальность:</Title>
+                {mostPopularSpecialty ? (
+                    <>
+                        <p><strong>Название:</strong> {mostPopularSpecialty.title}</p>
+                        <p><strong>Участников:</strong> {mostPopularSpecialty.totalRegistrations}</p>
+                        <p><strong>Мероприятий:</strong> {mostPopularSpecialty.eventsCount}</p>
+                    </>
+                ) : (
+                    <p>Данные отсутствуют</p>
+                )}
             </div>
         </Card>
     </>);

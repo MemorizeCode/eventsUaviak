@@ -1,5 +1,3 @@
-
-
 import $api from "@/app/config/api";
 import { AppDispatch } from "@/app/providers/store/store";
 import {
@@ -15,9 +13,10 @@ import {
     StatsEventAsync
 } from "@/features/Admin";
 
-
 import Button from "antd/es/button";
+import Card from "antd/es/card/Card";
 import Flex from "antd/es/flex";    
+import Title from "antd/es/typography/Title";
 import { Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -37,7 +36,6 @@ const AdminPage = () => {
 
     return (
         <>
-            <Button onClick={loadSpecial}>load spe</Button>
             <Flex wrap="wrap" gap="middle" flex={1}>
                 <Suspense fallback={<div>Loading create events...</div>}>
                     <CreateEventAsync />
@@ -67,6 +65,13 @@ const AdminPage = () => {
 
                 <Suspense fallback={<div>Loading delete special...</div>}>
                     <DeleteSpesialAsync />
+                </Suspense>
+
+                <Suspense fallback={<div>Loading load special...</div>}>
+                    <Card>
+                        <Title level={5}>Загрузить специальности по умолчанию</Title>
+                        <Button onClick={loadSpecial} type="primary">Загрузить</Button>
+                    </Card>
                 </Suspense>
             </Flex>
             <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "50px" }}>

@@ -24,8 +24,8 @@ services:
       - DATABASE_URL=mysql://root:root@host.docker.internal:3306/eventsUaviak?connection_limit=5&connect_timeout=30
       - VITE_API_BACKEND=http://localhost:3000/api/
       - CORS_ORIGIN=http://localhost:80
-      - ACCESS_KEY=key1
-      - REFRESH_KEY=key2
+      - ACCESS_KEY=IsTopSecretaccessKey
+      - REFRESH_KEY=IsTopSecretrefreshKey
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: sh -c "sleep 10 && npm run start:prod"

@@ -18,7 +18,7 @@ const RecordsEvents = memo(() => {
         {
             title: "ID",
             dataIndex: 'id',
-            key: 'id'
+            key: 'id',
         },
         {
             title: "ФИО",
@@ -108,7 +108,7 @@ const RecordsEvents = memo(() => {
         <Card style={{ minWidth: "500px" }}>
             <Title level={2}>Записи на мероприятия</Title>
             {records && Array.isArray(records) && records.length > 0 ?
-                <Table rowKey="id" columns={columns} dataSource={records} />
+                <Table rowKey={() => Date.now() * Math.random()} columns={columns} dataSource={records} />
                 :
                 <p>Записей нет</p>
             }

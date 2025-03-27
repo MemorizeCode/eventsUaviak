@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import Layout from "antd/es/layout";
 import Menu from "antd/es/menu";
 import Button from "antd/es/button";
@@ -14,7 +14,7 @@ import $api from "@/app/config/api";
 
 const { Header } = Layout;
 
-const NavBar = () => {
+const NavBar = memo(() => {
   const [visible, setVisible] = useState(false);
   const role = useSelector((state: RootState) => state?.user?.role);
   const auth = useSelector((state: RootState) => state?.user?.auth);
@@ -52,7 +52,7 @@ const NavBar = () => {
     ...(!auth
       ? [
         {
-          key: "8",
+          key: "3",
           label: <NavLink to="/login" style={{ fontSize: "16px" }}>ВОЙТИ</NavLink>,
         },
       ]
@@ -60,11 +60,11 @@ const NavBar = () => {
     ...(auth && (role === "ADMIN" || role === "admin")
       ? [
         {
-          key: "3",
+          key: "4",
           label: <NavLink to="/admin" style={{ fontSize: "16px" }}>АДМИНКА</NavLink>,
         },
         {
-          key: "4",
+          key: "5",
           label: (
             <Button danger type="primary" onClick={logOut} style={{ fontSize: "16px" }}>
               ВЫЙТИ
@@ -157,6 +157,6 @@ const NavBar = () => {
       </Header>
     </Layout>
   );
-};
+});
 
 export default NavBar;
