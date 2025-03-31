@@ -1,5 +1,7 @@
-# Этап сборки
-FROM node:18 as builder
+# через это не хотело
+# FROM node:18 as builder
+FROM mirror.gcr.io/library/node:18 as builder
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci

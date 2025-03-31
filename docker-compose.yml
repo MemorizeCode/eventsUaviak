@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   client:
     build:
@@ -26,6 +24,7 @@ services:
       - CORS_ORIGIN=http://localhost:80
       - ACCESS_KEY=IsTopSecretaccessKey
       - REFRESH_KEY=IsTopSecretrefreshKey
+      - PRISMA_QUERY_ENGINE_BINARY=/app/node_modules/@prisma/engines/query-engine
     extra_hosts:
       - "host.docker.internal:host-gateway"
     command: sh -c "sleep 10 && npm run start:prod"
@@ -33,7 +32,9 @@ services:
       - app-network
 
   db:
-    image: mysql:8.0
+    # через это не хотело чета
+    # image: mysql:8.0
+    image: mirror.gcr.io/library/mysql:8.0
     ports:
       - "3307:3306"
     environment:

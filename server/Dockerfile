@@ -1,26 +1,26 @@
-FROM node:18
+FROM mirror.gcr.io/library/node:18
 
 WORKDIR /app
+
 
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN rm -rf node_modules
-RUN npm cache clean --force
-RUN npm install
+# zerkalo
+RUN npm config set registry https://registry.npmmirror.com
+RUN npm install --ignore-scripts
 
-#Генерация клиента Prisma, хз мб понадобится
-RUN npx prisma generate
+#ошибка из за этого
+# RUN npx prisma generate --no-engine
 
-
-# # Миграции
-# RUN npx prisma migrate deploy
 
 COPY . .
 
 
 RUN npm run build
 
+
 EXPOSE 3000
+
 
 CMD ["npm", "run", "start:prod"]
