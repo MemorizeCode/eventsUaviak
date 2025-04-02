@@ -152,6 +152,10 @@ export class AuthService {
 
       const payload = await this.jwt.verifyRefreshToken(refreshToken);
 
+      if (!payload) {
+        throw new UnauthorizedException('Не верный токен обновления');
+      }
+
       const user = await this.prisma.user.findUnique({
         where: { id: payload.id },
       });

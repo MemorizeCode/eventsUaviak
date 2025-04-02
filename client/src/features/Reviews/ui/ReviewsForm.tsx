@@ -13,7 +13,7 @@ const Reviews = memo(() => {
     const dispatch = useDispatch<AppDispatch>()
     const [form] = Form.useForm();
 
-    const memoizedInput = useMemo(() => <Input />, []);
+    const memoizedInput = useMemo(() => <Input placeholder="Введите ваше имя" maxLength={50} showCount />, []);
 
     async function onFinish(e: { name: string, text: string, stars: number }) {
         const response = await dispatch(fetchNewReviews({ name: e.name, reviews: e.text, stars: e.stars }))
@@ -47,7 +47,7 @@ const Reviews = memo(() => {
                 label="Ваш отзыв"
                 rules={[{ required: true, message: 'Пожалуйста, оставьте ваш отзыв!' }]}
             >
-                <Input.TextArea rows={4} />
+                <Input.TextArea rows={4} maxLength={500} showCount />
             </Form.Item>
             <Form.Item name="stars" label="Оценка" rules={[{ required: true, message: "Пожалуйста, поставьте оценку!" }]}>
                     <Rate

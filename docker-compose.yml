@@ -13,6 +13,8 @@ services:
       - VITE_API_BACKEND=/api/
 
   server:
+    env_file:
+      - server/.env
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -20,36 +22,33 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_URL=mysql://root:root@host.docker.internal:3306/eventsUaviak?connection_limit=5&connect_timeout=30
+      - PRISMA_CLI_QUERY_ENGINE_TYPE=binary
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
       - VITE_API_BACKEND=http://localhost:3000/api/
       - CORS_ORIGIN=http://localhost:80
-      - ACCESS_KEY=IsTopSecretaccessKey
-      - REFRESH_KEY=IsTopSecretrefreshKey
-      - PRISMA_QUERY_ENGINE_BINARY=/app/node_modules/@prisma/engines/query-engine
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    command: sh -c "sleep 10 && npm run start:prod"
     networks:
       - app-network
+    depends_on:
+      db:
+        condition: service_healthy
+
 
   db:
-    # через это не хотело чета
-    # image: mysql:8.0
-    image: mirror.gcr.io/library/mysql:8.0
+    image: mysql:8.0
     ports:
       - "3307:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=eventsUaviak
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      test: ["CMD", "mysql", "-u", "root", "-proot", "-e", "SELECT 1 FROM DUAL WHERE EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'eventsUaviak');"]
       interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      timeout: 10s
+      retries: 10
 
 volumes:
   mysql_data:

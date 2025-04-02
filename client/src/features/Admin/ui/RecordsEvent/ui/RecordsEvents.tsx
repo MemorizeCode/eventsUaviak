@@ -1,6 +1,9 @@
+import $api from "@/app/config/api";
 import { AppDispatch, RootState } from "@/app/providers/store/store";
 import { fetchGetRecords } from "@/features/Admin";
 import { FetchGetRecordsData } from "@/features/Admin/models/service/fetchGetRecords";
+import message from "antd/es/message"
+import Button from "antd/es/button";
 import Card from "antd/es/card";
 import Table from "antd/es/table";
 import Typography from "antd/es/typography";
@@ -13,13 +16,35 @@ const { Title } = Typography;
 const RecordsEvents = memo(() => {
     const dispatch = useDispatch<AppDispatch>()
     const records = useSelector((state: RootState) => state?.recordsEvents?.records)
+
+
+    async function downoloadFile(file: string) {
+        try {
+            const response = await $api.get(`/record/downloadList/${file}`, {
+                responseType: "blob"
+            })
+            if (response?.status === 200) {
+                const data = response.data
+                const url = window.URL.createObjectURL(new Blob([data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', file);
+                document.body.appendChild(link);
+                link.click();
+                link.remove()
+                message.success("Файл скачан")
+            }
+            else if(response?.status === 404){
+                message.error("Файл не найден")
+            }
+        }
+        catch (error) {
+            message.error("Ошибка при скачивании файла")
+        }
+    }
+
     // const message = useSelector((state: RootState) => state?.recordsEvents?.message)
     const columns = [
-        {
-            title: "ID",
-            dataIndex: 'id',
-            key: 'id',
-        },
         {
             title: "ФИО",
             dataIndex: 'name',
@@ -80,12 +105,25 @@ const RecordsEvents = memo(() => {
             dataIndex: "status",
             key: 'status',
             render: (_: string, action: FetchGetRecordsData) => {
-                const recordDate = new Date(action.recordDate)
+                console.log(action)
+                const nowDate = new Date()
                 const eventDate = new Date(action.eventsDate)
-                if (recordDate > eventDate) {
+                if (nowDate > eventDate) {
                     return <p style={{ color: "red" }}>Мероприятие прошло</p>
                 }
                 return <p style={{ color: "green" }}>Мероприятие будет</p>
+            }
+        },
+        {
+            title: "Скачать",
+            dataIndex: "url",
+            key: 'url',
+            render: (_: string, action: FetchGetRecordsData) => {
+                const file = action.listPeople
+                if (file) {
+                    return <Button type="primary" onClick={() => downoloadFile(file)}>Скачать файл</Button>
+                }
+                return <p>Файл отсуствует</p>
             }
         }
         // {

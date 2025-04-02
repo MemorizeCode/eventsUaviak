@@ -16,7 +16,6 @@ export class AuthMiddleware implements NestMiddleware {
     if (
       secretKey === 'hi_developer_sorry_for_the_bad_code_thats_how_it_should_be'
     ) {
-      console.log('Secret Key совпал, пропускаем запрос');
       next();
       return;
     }
@@ -35,7 +34,7 @@ export class AuthMiddleware implements NestMiddleware {
       }
     } catch (e) {
       console.log(e);
-      throw new UnauthorizedException('Не верный  токен авторизации');
+      throw new UnauthorizedException('Ошибка проверки токена');
     }
   }
 }

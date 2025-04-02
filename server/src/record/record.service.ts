@@ -282,6 +282,7 @@ export class RecordService {
             school: true,
             countPeople: true,
             createdAt: true,
+            listPeople: true,
             events: {
               select: {
                 title: true,
@@ -325,6 +326,7 @@ export class RecordService {
         eventsTitle: record.events.title,
         eventsDate: record.events.date,
         recordDate: record.createdAt,
+        listPeople: record.listPeople,
         type: 'Групповая',
       }));
 
@@ -341,7 +343,7 @@ export class RecordService {
         type: 'Индивидуальная', // Исправлена опечатка
       }));
 
-      const result = [...groupRecords, ...individualRecords];
+      const result = [ ...individualRecords, ...groupRecords];
       if (result.length) {
         return { data: result, message: 'Записи успешно получены' };
       }

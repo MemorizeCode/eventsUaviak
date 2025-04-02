@@ -19,6 +19,7 @@ export interface FetchGetRecordsData {
     school: string
     countPeople: number
     eventsTitle: string
+    listPeople: string
     eventsDate: string
     recordDate: string
     type: string

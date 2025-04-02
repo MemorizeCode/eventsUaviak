@@ -58,7 +58,6 @@ export class AdminGuard implements CanActivate {
       if (e instanceof HttpException) {
         throw e;
       }
-      console.error('AdminGuard Error:', e);
       throw new UnauthorizedException('Ошибка проверки прав доступа');
     }
   }

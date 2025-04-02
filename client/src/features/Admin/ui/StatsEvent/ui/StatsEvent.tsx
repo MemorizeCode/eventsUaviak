@@ -65,7 +65,7 @@ const StatsEvent = memo(() => {
 
     return (<>
         <Card>
-            <Title level={2}>Статистика мероприятий</Title>
+            <Title level={2}>Статистика мероприятий | Которые уже прошли</Title>
             <div style={{ marginTop: "20px" }}>
                 <Title level={3}>
                     За {yearStats} год: {peopleStatsYear} посетителей

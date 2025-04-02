@@ -19,6 +19,7 @@ CREATE TABLE `Events` (
     `whoClasses` VARCHAR(191) NOT NULL,
     `isDelete` BOOLEAN NOT NULL DEFAULT false,
     `prepod` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `specialityId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -35,6 +36,7 @@ CREATE TABLE `RecordGroup` (
     `phone` VARCHAR(191) NOT NULL,
     `countPeople` INTEGER NOT NULL,
     `listPeople` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `eventsId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
@@ -49,6 +51,7 @@ CREATE TABLE `RecordInvididual` (
     `school` VARCHAR(191) NOT NULL,
     `class` VARCHAR(191) NOT NULL,
     `telephoneNumber` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `eventsId` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)

@@ -102,11 +102,7 @@ export const fetchRecordGr = createAsyncThunk<RecordGroupResponse, RecordGroupPa
       formDataToSend.append('phone', tel);
       formDataToSend.append('fileList', fileList[0].originFileObj);
 
-      const response = await $api.post<RecordGroupResponse>("/record/createGroupRecord", formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-      });
+      const response = await $api.post<RecordGroupResponse>("/record/createGroupRecord", formDataToSend);
 
       if (response.status === 200) {
         return thunkAPI.fulfillWithValue(response.data);

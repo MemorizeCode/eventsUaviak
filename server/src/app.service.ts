@@ -3,12 +3,12 @@ import { PrismaService } from './service/prisma.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async loadSpecial() {
-    try{
+    try {
       const isSpecial = await this.prisma.eventSpeciality.findMany()
-      if(isSpecial.length > 0) {
+      if (isSpecial.length > 0) {
         throw new HttpException("Специальности уже существуют", HttpStatus.BAD_REQUEST)
       }
 
@@ -40,7 +40,7 @@ export class AppService {
           { title: '40.02.01 - Право и организация социального обеспечения' },
           { title: '40.02.04 - Юриспруденция' },
           { title: '38.02.03 - Операционна деятельность в логистике' },
-  
+
           //проф
           {
             title:
@@ -59,8 +59,8 @@ export class AppService {
         ],
       });
     }
-    catch(e){
-      if(e instanceof HttpException) {
+    catch (e) {
+      if (e instanceof HttpException) {
         throw e
       }
       throw new HttpException("Ошибка сервера. Попробуйте позже", HttpStatus.INTERNAL_SERVER_ERROR)
