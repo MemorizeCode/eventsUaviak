@@ -17,7 +17,7 @@ export const reviewsSlice = createSlice({
     },
     extraReducers: (builder) =>{
         builder.addCase(fetchGetReviews.pending, ()=>{
-            console.log("Загрузка отзывов...");
+            //загрузка отзывов
         })
         builder.addCase(fetchGetReviews.fulfilled, (state, action:PayloadAction<FetchGetReviewsResponse>)=>{
             state.reviewsList = action.payload.data

@@ -20,7 +20,6 @@ const AuthForm = () => {
     async function loginUser() {
         const response = await dispatch(fetchAuthUser({ login, password }))
         const payload = response.payload as AuthUserError
-        console.log(response)
         if(response.meta.requestStatus == "fulfilled"){
             message.success(payload.message)
             navigate("/")

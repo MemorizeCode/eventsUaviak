@@ -10,7 +10,6 @@ export class RecordService {
   async createInvididualRecord(body: RecordInvididualDto) {
     try {
       if (body.telephoneNumber.length != 11) {
-        console.log(body.telephoneNumber.length);
         throw new HttpException(
           'Не верный номер телефона',
           HttpStatus.BAD_REQUEST,
@@ -38,15 +37,30 @@ export class RecordService {
       });
 
       if (event) {
+        let telephoneNumber;
+        
+        if (body.telephoneNumber.startsWith('8')) {
+          telephoneNumber = '7' + body.telephoneNumber.slice(1);
+        }
+        else{
+          telephoneNumber = body.telephoneNumber;
+        }
         //проверка уже существующих записей
         const isRecord = await this.prisma.recordInvididual.findFirst({
           where: {
             eventsId: Number(body.eventsId),
-            telephoneNumber: String(body.telephoneNumber),
+            telephoneNumber: String(telephoneNumber),
           },
         });
 
-        if (isRecord) {
+        const isRecordInv = await this.prisma.recordGroup.findFirst({
+          where: {
+            eventsId: Number(body.eventsId),
+            phone: String(telephoneNumber),
+          },
+        });
+
+        if (isRecord || isRecordInv) {
           throw new HttpException(
             'Такой номер телефона уже записан',
             HttpStatus.BAD_REQUEST,
@@ -94,7 +108,7 @@ export class RecordService {
             surname: body.surname,
             school: body.school,
             class: body.class,
-            telephoneNumber: String(body.telephoneNumber),
+            telephoneNumber: telephoneNumber,
             eventsId: Number(body.eventsId),
           },
         });
@@ -145,15 +159,29 @@ export class RecordService {
         },
       });
       if (event) {
+        let telephoneNumber;
+        if (body.phone.startsWith('8')) {
+          telephoneNumber = '7' + body.phone.slice(1);
+        }
+        else{
+          telephoneNumber = body.phone;
+        }   
         //проверка уже существующих записей
         const isRecord = await this.prisma.recordGroup.findFirst({
           where: {
             eventsId: Number(body.eventsId),
-            phone: body.phone,
+            phone: String(telephoneNumber),
           },
         });
 
-        if (isRecord) {
+        const isRecordInv = await this.prisma.recordInvididual.findFirst({  
+          where: {
+            eventsId: Number(body.eventsId),
+            telephoneNumber: String(telephoneNumber),
+          },
+        });
+
+        if (isRecord || isRecordInv) {
           throw new HttpException(
             'Такой номер телефона уже записан',
             HttpStatus.BAD_REQUEST,
@@ -206,7 +234,7 @@ export class RecordService {
             countPeople: Number(body.countPeople),
             listPeople: file.filename,
             eventsId: Number(body.eventsId),
-            phone: body.phone,
+            phone: String(telephoneNumber),
           },
         });
         if (newRecord) {
@@ -344,8 +372,12 @@ export class RecordService {
       }));
 
       const result = [ ...individualRecords, ...groupRecords];
-      if (result.length) {
-        return { data: result, message: 'Записи успешно получены' };
+
+      //Сортировка по дате
+      const sortedResult = result.sort((a, b) => new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime());
+
+      if (sortedResult.length) {
+        return { data: sortedResult, message: 'Записи успешно получены' };
       }
       return { message: 'Записей нету', data: [] };
     } catch (e) {

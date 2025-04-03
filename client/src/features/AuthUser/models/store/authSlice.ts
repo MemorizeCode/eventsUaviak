@@ -17,13 +17,13 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder)=>{
     builder.addCase(fetchAuthUser.pending, ()=>{
-        console.log("penging auth")
+    
     })
     builder.addCase(fetchAuthUser.fulfilled, ()=>{
-        console.log('fulfilled auth')
+      
     })
     builder.addCase(fetchAuthUser.rejected, ()=>{
-      console.log('rejected auth')
+      //ошибка авторизации
     })
   }
 })

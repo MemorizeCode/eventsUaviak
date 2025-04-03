@@ -25,7 +25,8 @@ export default tseslint.config(
       ],
       "@typescript-eslint/no-unused-expressions": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/ban-ts-comment": "warn"
+      "@typescript-eslint/ban-ts-comment": "warn",
+      "@/no-console": "error",
       // "@typescript-eslint/no-explicit-any": "off",
     },
   },

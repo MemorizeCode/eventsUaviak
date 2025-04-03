@@ -16,7 +16,6 @@ const userSlice = createSlice({
       state.auth = action.payload;
     },
     setIsLoading: (state, action) => {
-      console.log(action)
       state.isLoading = action.payload;
     },
     setRole: (state, action) => {

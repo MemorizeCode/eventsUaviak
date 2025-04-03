@@ -41,7 +41,6 @@ const EditSpecial = memo(() => {
     async function editSpecial() {
         const response = await dispatch(fetchEditSpesial({ id, title }))
         const payload = response.payload as EditSpesialError
-        console.log(response)
         if (response.meta.requestStatus === "fulfilled") {
             message.success(payload.message)
             setTitle("")

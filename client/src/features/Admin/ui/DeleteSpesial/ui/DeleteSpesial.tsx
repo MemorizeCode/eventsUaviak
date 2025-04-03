@@ -52,7 +52,7 @@ const DeleteSpesial = memo(() => {
             setSelectedSpecial(null)
         }
         catch(error){
-            console.log(error)
+            //ошибка удаления специальности
         }
     }
 

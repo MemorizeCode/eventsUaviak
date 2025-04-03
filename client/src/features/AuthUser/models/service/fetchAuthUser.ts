@@ -33,7 +33,6 @@ export const fetchAuthUser = createAsyncThunk<AuthUserResponse, AuthUserParams, 
                 login,password
             })
             if(response.status === 200){
-                console.log(response)
                 localStorage.setItem("accessToken", response.data.accessToken)
                 // localStorage.setItem("refreshToken", response.data.refreshToken)
                 thunkAPI.dispatch(userSliceActions.setRole(response.data.role))

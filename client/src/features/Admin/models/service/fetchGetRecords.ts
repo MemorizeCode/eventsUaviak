@@ -37,7 +37,7 @@ export const fetchGetRecords = createAsyncThunk<FetchGetRecordsResponse, void, {
         })
     
     } catch (error) {
-        console.log(error)
+        //ошибка при получении записей
         return thunkAPI.rejectWithValue({
             status: "error",
             message: "Ошибка при получении записей"

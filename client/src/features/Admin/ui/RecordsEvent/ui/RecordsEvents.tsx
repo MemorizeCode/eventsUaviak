@@ -105,7 +105,6 @@ const RecordsEvents = memo(() => {
             dataIndex: "status",
             key: 'status',
             render: (_: string, action: FetchGetRecordsData) => {
-                console.log(action)
                 const nowDate = new Date()
                 const eventDate = new Date(action.eventsDate)
                 if (nowDate > eventDate) {

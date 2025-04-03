@@ -35,7 +35,7 @@ const NavBar = memo(() => {
       dispatch(userSliceActions.setRole("USER"));
       localStorage.removeItem("accessToken");
     }catch(error){
-      console.log("ошибка логаута")
+      //ошибка логаута
     }
   };
 

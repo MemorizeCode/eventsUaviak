@@ -33,7 +33,7 @@ const NewSpesial = memo(() => {
             }
         }
         catch(error){
-            console.log(error)
+            //ошибка добавления специальности
         }
     }
 

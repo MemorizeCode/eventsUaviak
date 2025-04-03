@@ -18,20 +18,20 @@ $api.interceptors.response.use(
   async (err) => {
     const originalRequest = err.config;
 
-    if ((err.response.status === 403 || err.response.status === 401) && err.config && !err.config._isRetry) {
+    if (err.response.status === 401 && err.config && !err.config._isRetry) {
       originalRequest._isRetry = true;
       try {
         const response = await axios.post(`${import.meta.env.VITE_API_BACKEND}/auth/token`, {}, {withCredentials: true})
         if (response.status === 200) {
-          console.log("Генерация токенов или проверка user успешна");
+          // console.log("Генерация токенов или проверка user успешна");
         } else {
-          console.log("Ошибка авторизации");
+          // console.log("Ошибка авторизации");
         }
         localStorage.setItem('accessToken', response?.data.accessToken);
         // localStorage.setItem('refreshToken', response?.data.refreshToken)
         return await $api.request(originalRequest);
       } catch (_) {
-        console.log("Сработал config");
+        // console.log("Сработал config");
       }
     }
     return err.response;
