@@ -3,13 +3,16 @@ import { PrismaService } from './service/prisma.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async loadSpecial() {
     try {
-      const isSpecial = await this.prisma.eventSpeciality.findMany()
+      const isSpecial = await this.prisma.eventSpeciality.findMany();
       if (isSpecial.length > 0) {
-        throw new HttpException("Специальности уже существуют", HttpStatus.BAD_REQUEST)
+        throw new HttpException(
+          'Специальности уже существуют',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       await this.prisma.eventSpeciality.createMany({
@@ -26,7 +29,9 @@ export class AppService {
             title:
               '25.02.03 - Техническая эксплуатация электрифицированных и пилотажно-навигационных комплексов',
           },
-          { title: '25.02.06 - Производсвто и обслуживание авиационной техники' },
+          {
+            title: '25.02.06 - Производсвто и обслуживание авиационной техники',
+          },
           { title: '25.02.08 - Эксплуатация беспилотных авиационных систем' },
           {
             title:
@@ -48,7 +53,8 @@ export class AppService {
           },
           { title: '15.01.32 - Оператор станков с программным управлением' },
           {
-            title: '15.01.38 - Оператор - наладчик металлообрабатывающих станков',
+            title:
+              '15.01.38 - Оператор - наладчик металлообрабатывающих станков',
           },
           { title: '23.01.17 - Мастер по ремонту и обслуживанию автомобилей' },
           { title: '15.01.35 - Мастер слесарных работ' },
@@ -58,12 +64,14 @@ export class AppService {
           { title: '15.01.29 - Контроллер качества в машиностроении' },
         ],
       });
-    }
-    catch (e) {
+    } catch (e) {
       if (e instanceof HttpException) {
-        throw e
+        throw e;
       }
-      throw new HttpException("Ошибка сервера. Попробуйте позже", HttpStatus.INTERNAL_SERVER_ERROR)
+      throw new HttpException(
+        'Ошибка сервера. Попробуйте позже',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

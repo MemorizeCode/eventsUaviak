@@ -38,11 +38,10 @@ export class RecordService {
 
       if (event) {
         let telephoneNumber;
-        
+
         if (body.telephoneNumber.startsWith('8')) {
           telephoneNumber = '7' + body.telephoneNumber.slice(1);
-        }
-        else{
+        } else {
           telephoneNumber = body.telephoneNumber;
         }
         //проверка уже существующих записей
@@ -162,10 +161,9 @@ export class RecordService {
         let telephoneNumber;
         if (body.phone.startsWith('8')) {
           telephoneNumber = '7' + body.phone.slice(1);
-        }
-        else{
+        } else {
           telephoneNumber = body.phone;
-        }   
+        }
         //проверка уже существующих записей
         const isRecord = await this.prisma.recordGroup.findFirst({
           where: {
@@ -174,7 +172,7 @@ export class RecordService {
           },
         });
 
-        const isRecordInv = await this.prisma.recordInvididual.findFirst({  
+        const isRecordInv = await this.prisma.recordInvididual.findFirst({
           where: {
             eventsId: Number(body.eventsId),
             telephoneNumber: String(telephoneNumber),
@@ -371,10 +369,13 @@ export class RecordService {
         type: 'Индивидуальная', // Исправлена опечатка
       }));
 
-      const result = [ ...individualRecords, ...groupRecords];
+      const result = [...individualRecords, ...groupRecords];
 
       //Сортировка по дате
-      const sortedResult = result.sort((a, b) => new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime());
+      const sortedResult = result.sort(
+        (a, b) =>
+          new Date(b.recordDate).getTime() - new Date(a.recordDate).getTime(),
+      );
 
       if (sortedResult.length) {
         return { data: sortedResult, message: 'Записи успешно получены' };
