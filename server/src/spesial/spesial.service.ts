@@ -10,7 +10,7 @@ export class SpesialService {
     try {
       const data = await this.prisma.eventSpeciality.findMany();
       if (!data) {
-        return { message: 'Специальности отсуствоую', data: [] };
+        return { message: 'Специальности отсутствуют', data: [] };
       }
       return { message: 'Специальности найдены', data };
     } catch (e) {

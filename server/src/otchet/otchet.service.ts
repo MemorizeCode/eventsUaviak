@@ -103,7 +103,7 @@ export class OtchetService {
               is: {
                 date: {
                   gte: new Date(Number(y), Number(m - 1), 1),
-                  lte: new Date(Number(y), Number(m), 31),
+                  lte: new Date(Number(y), Number(m - 1), 31),
                 },
               },
             },
