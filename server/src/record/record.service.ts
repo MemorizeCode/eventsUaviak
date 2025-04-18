@@ -5,7 +5,7 @@ import { RecordGroupDTO } from './recorod-group-dto/RecordGroupDTO';
 
 @Injectable()
 export class RecordService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async createInvididualRecord(body: RecordInvididualDto) {
     try {
@@ -37,6 +37,13 @@ export class RecordService {
       });
 
       if (event) {
+        //Если дата мероприятия прошла, то записать нельзя
+        if (event.date < new Date()) {
+          throw new HttpException(
+            'Мероприятие уже прошло!',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
         let telephoneNumber;
 
         if (body.telephoneNumber.startsWith('8')) {
@@ -65,7 +72,6 @@ export class RecordService {
             HttpStatus.BAD_REQUEST,
           );
         }
-
         const [records, recordGr] = await Promise.all([
           await this.prisma.recordInvididual.findMany({
             where: {
@@ -152,12 +158,21 @@ export class RecordService {
         );
       }
 
+
+
       const event = await this.prisma.events.findUnique({
         where: {
           id: Number(body.eventsId),
         },
       });
       if (event) {
+        //Если дата мероприятия прошла, то записать нельзя
+        if (event.date < new Date()) {
+          throw new HttpException(
+            'Мероприятие уже прошло!',
+            HttpStatus.BAD_REQUEST,
+          );
+        }
         let telephoneNumber;
         if (body.phone.startsWith('8')) {
           telephoneNumber = '7' + body.phone.slice(1);

@@ -25,7 +25,7 @@ import { Response } from 'express';
 @Controller('/record')
 export class RecordController {
   constructor(private readonly recordService: RecordService) {}
-
+  
   @Get('/downloadList/:url')
   @Header(
     'Content-Type',
