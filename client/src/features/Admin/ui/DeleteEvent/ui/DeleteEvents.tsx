@@ -1,6 +1,5 @@
 import { AppDispatch } from "@/app/providers/store/store";
 import { DeleteEventError, fetchDeleteEvent } from "@/features/Admin/models/service/fetchDeleteEvent";
-
 import { memo, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import Button from "antd/es/button";
@@ -17,7 +16,6 @@ const DeleteEvents = memo(() => {
 
     const dispatch = useDispatch<AppDispatch>()
     const [idEvent, setIdEvent] = useState<number | string>('')
-
 
     async function deleteEvents() {
         const response = await dispatch(fetchDeleteEvent({ idEvent }))

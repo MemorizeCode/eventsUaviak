@@ -1,2 +1,2 @@
-// import  ReviewsPage from './ui/ReviewsPage'
-// export { ReviewsPage}
+import  ReviewsPage from './ui/ReviewsPage'
+export { ReviewsPage}

@@ -191,9 +191,15 @@ export class EventsService {
           const [records, recordGr] = await Promise.all([
             this.prisma.recordInvididual.findMany({
               where: { eventsId: event.id },
+              orderBy: {
+                createdAt: 'desc',
+              },
             }),
             this.prisma.recordGroup.findMany({
               where: { eventsId: event.id },
+              orderBy: {
+                createdAt: 'desc',
+              },
             }),
           ]);
 

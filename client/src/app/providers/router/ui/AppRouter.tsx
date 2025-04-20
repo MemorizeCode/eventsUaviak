@@ -8,7 +8,7 @@ const AppRouter = memo(() => {
     const render = useCallback((route: AppRoutesOptions) => {
 
         const element = (
-            <Suspense fallback="Loading...">
+            <Suspense fallback="Загрузка...">
                 {route.element}
             </Suspense>
         )

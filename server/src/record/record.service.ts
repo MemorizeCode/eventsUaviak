@@ -90,8 +90,7 @@ export class RecordService {
           records.length +
           recordGr.reduce((prev, acc) => prev + acc.countPeople, 0);
         const countNow = 1;
-        console.log('Кол-во записанных: ', count);
-        console.log('Кол-во сколько можно зап: ', event.people_count);
+
 
         if (count > event.people_count) {
           throw new HttpException(
@@ -220,9 +219,6 @@ export class RecordService {
           recordGr.reduce((prev, acc) => prev + acc.countPeople, 0);
 
         const countNow = Number(body.countPeople);
-        console.log('Кол-во записанных: ', count);
-        console.log('Кол-во сколько можно зап: ', event.people_count);
-        console.log('На запись: ', body.countPeople);
 
         if (count > event.people_count) {
           throw new HttpException(

@@ -66,6 +66,11 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
     <Paragraph style={paragraphDetailsStyle}><strong>Свободных мест:</strong> {mest}</Paragraph>
   ), [mest, paragraphDetailsStyle]);
 
+  const isDatePassed = useMemo(() => {
+    const date = new Date(event.date);
+    return date < new Date();
+  }, [event.date]);
+
   return (
     <Card className={styles.eventCard}>
       <div className={styles.content}>
@@ -83,6 +88,7 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
           {memoizedMest}
           <Paragraph style={paragraphDetailsStyle}><strong>Для классов:</strong> {event.whoClasses}</Paragraph>
           <Paragraph style={paragraphDetailsStyle}><strong>Специальность:</strong> {event.eventSpeciality.title}</Paragraph>
+          <Paragraph style={paragraphDetailsStyle}><strong>Доп. информация:</strong> {isDatePassed ? "Мероприятие уже прошло" : "Мероприятие будет"}</Paragraph>
           <small style={smallStyle}><strong>ID:</strong> {event.id}</small>
         </div>
       </div>

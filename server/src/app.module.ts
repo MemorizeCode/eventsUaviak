@@ -16,6 +16,8 @@ import { MaxSecretModule } from './max-secret/max-secret.module';
 import { OtchetModule } from './otchet/otchet.module';
 import { RecordModule } from './record/record.module';
 import { SpesialModule } from './spesial/spesial.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from './service/logging.service';
 
 @Module({
   imports: [
@@ -28,7 +30,12 @@ import { SpesialModule } from './spesial/spesial.module';
     SpesialModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, TokenService],
+  providers: [AppService, PrismaService, TokenService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+  ],
   exports: [PrismaService, TokenService],
 })
 export class AppModule implements NestModule {

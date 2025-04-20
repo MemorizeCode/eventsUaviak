@@ -1,1 +1,4 @@
-// export {EventsPage} from "./ui/EventsPageAsync"
+import EventsPage from "./ui/EventsPage"
+
+export { EventsPage}
+
