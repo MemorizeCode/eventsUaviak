@@ -1,10 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/service/prisma.service';
 import { EventDTO } from './dto/Event.dto';
-
+import * as luxon from 'luxon';
 @Injectable()
 export class EventsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async createEvent(body: EventDTO) {
     try {
@@ -25,11 +25,12 @@ export class EventsService {
           HttpStatus.BAD_REQUEST,
         );
       }
+      const dateTime = luxon.DateTime.fromISO(`${body.date}T${body.times}`, { zone: 'UTC' });
       await this.prisma.events.create({
         data: {
           title: body.title,
           description: body.description,
-          date: new Date(body.date),
+          date: dateTime.toISO(),
           times: String(body.times),
           duration: Number(body.duration),
           cabinet: String(body.cabinet),
@@ -41,6 +42,7 @@ export class EventsService {
       });
       return { message: 'Мероприятие создано.' };
     } catch (e) {
+      console.log(e)
       if (e.code === 'P2003') {
         throw new HttpException(
           'Специальность не найдена',
@@ -178,7 +180,7 @@ export class EventsService {
         take: limit,
         skip: (page - 1) * limit,
         orderBy: {
-          id: 'desc',
+          createdAt: 'desc',
         },
       });
 

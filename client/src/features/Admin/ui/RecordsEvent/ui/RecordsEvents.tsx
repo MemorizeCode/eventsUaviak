@@ -96,6 +96,15 @@ const RecordsEvents = memo(() => {
             }
         },
         {
+            title: "Время мероприятия",
+            dataIndex: 'time',
+            key: 'time',
+            render: (_: string, action: FetchGetRecordsData) => {
+                const splitData = action.eventsDate?.split('T')[1].split(':');
+                return `${splitData[0]}:${splitData[1]}`
+            }
+        },
+        {
             title: "Тип",
             dataIndex: "type",
             key: 'type'

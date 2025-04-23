@@ -2,10 +2,80 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/service/prisma.service';
 import { RecordInvididualDto } from './record-invididual-dto/record-invididual-dto.interface';
 import { RecordGroupDTO } from './recorod-group-dto/RecordGroupDTO';
-
+import * as luxon from 'luxon';
+import { Events } from '@prisma/client';
 @Injectable()
 export class RecordService {
   constructor(private readonly prisma: PrismaService) { }
+
+
+  private async checkEventDate(date: Date) {
+    const eventDate = luxon.DateTime.fromISO(new Date(date).toISOString(), { setZone: true });
+    const currentDate = luxon.DateTime.local();
+    if (eventDate.toISO() < currentDate.toISO()) {
+      return true
+    }
+    return false
+  }
+
+  private async checkPhoneValidate(phone: string) {
+    let telephoneNumber;
+    if (phone.length != 11) return false
+    if (phone.startsWith('8')) {
+      telephoneNumber = '7' + phone.slice(1);
+    } else {
+      telephoneNumber = phone;
+    }
+    return telephoneNumber
+  }
+
+  private async checkRecordExists(eventsId: number, telephoneNumber: string) {
+    const isRecord = await this.prisma.recordInvididual.findFirst({
+      where: {
+        eventsId: Number(eventsId),
+        telephoneNumber: String(telephoneNumber),
+      },
+    });
+
+    const isRecordInv = await this.prisma.recordGroup.findFirst({
+      where: {
+        eventsId: Number(eventsId),
+        phone: String(telephoneNumber),
+      },
+    });
+
+    if (isRecord || isRecordInv) {
+      return false
+    }
+    return true
+  }
+
+  private async checkRecordCount(eventsId: number, typeRecord: "individual" | "group", countPeople?: number, event?: Events) {
+    const [records, recordGr] = await Promise.all([
+      await this.prisma.recordInvididual.findMany({
+        where: {
+          eventsId: Number(eventsId),
+        },
+      }),
+
+      await this.prisma.recordGroup.findMany({
+        where: {
+          eventsId: Number(eventsId),
+        },
+      }),
+    ]);
+
+    const count =
+      records.length +
+      recordGr.reduce((prev, acc) => prev + acc.countPeople, 0);
+    const countNow = typeRecord === "individual" ? 1 : countPeople;
+
+
+    if (count > event.people_count || countNow + count > event.people_count) {
+      return false
+    }
+    return true
+  }
 
   async createInvididualRecord(body: RecordInvididualDto) {
     try {
@@ -37,68 +107,24 @@ export class RecordService {
       });
 
       if (event) {
-        //Если дата мероприятия прошла, то записать нельзя
-        if (event.date < new Date()) {
+        const isDatePassed = await this.checkEventDate(event.date)
+        if (isDatePassed) {
           throw new HttpException(
             'Мероприятие уже прошло!',
             HttpStatus.BAD_REQUEST,
           );
         }
-        let telephoneNumber;
+        const telephoneNumber = await this.checkPhoneValidate(body.telephoneNumber)
+        const isRecordExists = await this.checkRecordExists(body.eventsId, telephoneNumber)
 
-        if (body.telephoneNumber.startsWith('8')) {
-          telephoneNumber = '7' + body.telephoneNumber.slice(1);
-        } else {
-          telephoneNumber = body.telephoneNumber;
-        }
-        //проверка уже существующих записей
-        const isRecord = await this.prisma.recordInvididual.findFirst({
-          where: {
-            eventsId: Number(body.eventsId),
-            telephoneNumber: String(telephoneNumber),
-          },
-        });
-
-        const isRecordInv = await this.prisma.recordGroup.findFirst({
-          where: {
-            eventsId: Number(body.eventsId),
-            phone: String(telephoneNumber),
-          },
-        });
-
-        if (isRecord || isRecordInv) {
+        if (!isRecordExists) {
           throw new HttpException(
             'Такой номер телефона уже записан',
             HttpStatus.BAD_REQUEST,
           );
         }
-        const [records, recordGr] = await Promise.all([
-          await this.prisma.recordInvididual.findMany({
-            where: {
-              eventsId: Number(body.eventsId),
-            },
-          }),
-
-          await this.prisma.recordGroup.findMany({
-            where: {
-              eventsId: Number(body.eventsId),
-            },
-          }),
-        ]);
-
-        const count =
-          records.length +
-          recordGr.reduce((prev, acc) => prev + acc.countPeople, 0);
-        const countNow = 1;
-
-
-        if (count > event.people_count) {
-          throw new HttpException(
-            'Запись прекращена. Мест не осталось',
-            HttpStatus.FORBIDDEN,
-          );
-        }
-        if (countNow + count > event.people_count) {
+        const isRecordCount = await this.checkRecordCount(body.eventsId, "individual", 0, event)
+        if (!isRecordCount) {
           throw new HttpException(
             'Запись прекращена. Мест не осталось',
             HttpStatus.FORBIDDEN,
@@ -114,8 +140,10 @@ export class RecordService {
             class: body.class,
             telephoneNumber: telephoneNumber,
             eventsId: Number(body.eventsId),
+            createdAt: luxon.DateTime.local().setZone('UTC+3').toJSDate(), // Для Москвы
           },
         });
+        console.log(luxon.DateTime.local().toISO())
         return {
           message: `Запись успешно создана на мероприятие "${event.title}"`,
         };
@@ -157,76 +185,34 @@ export class RecordService {
         );
       }
 
-
-
       const event = await this.prisma.events.findUnique({
         where: {
           id: Number(body.eventsId),
         },
       });
       if (event) {
-        //Если дата мероприятия прошла, то записать нельзя
-        if (event.date < new Date()) {
+
+        const isDatePassed = await this.checkEventDate(event.date)
+        if (isDatePassed) {
           throw new HttpException(
             'Мероприятие уже прошло!',
             HttpStatus.BAD_REQUEST,
           );
         }
-        let telephoneNumber;
-        if (body.phone.startsWith('8')) {
-          telephoneNumber = '7' + body.phone.slice(1);
-        } else {
-          telephoneNumber = body.phone;
-        }
-        //проверка уже существующих записей
-        const isRecord = await this.prisma.recordGroup.findFirst({
-          where: {
-            eventsId: Number(body.eventsId),
-            phone: String(telephoneNumber),
-          },
-        });
+        const telephoneNumber = await this.checkPhoneValidate(body.phone)
 
-        const isRecordInv = await this.prisma.recordInvididual.findFirst({
-          where: {
-            eventsId: Number(body.eventsId),
-            telephoneNumber: String(telephoneNumber),
-          },
-        });
+        const isRecordExists = await this.checkRecordExists(body.eventsId, telephoneNumber)
 
-        if (isRecord || isRecordInv) {
+
+        if (!isRecordExists) {
           throw new HttpException(
             'Такой номер телефона уже записан',
             HttpStatus.BAD_REQUEST,
           );
         }
 
-        const [records, recordGr] = await Promise.all([
-          await this.prisma.recordInvididual.findMany({
-            where: {
-              eventsId: Number(body.eventsId),
-            },
-          }),
-
-          await this.prisma.recordGroup.findMany({
-            where: {
-              eventsId: Number(body.eventsId),
-            },
-          }),
-        ]);
-
-        const count =
-          records.length +
-          recordGr.reduce((prev, acc) => prev + acc.countPeople, 0);
-
-        const countNow = Number(body.countPeople);
-
-        if (count > event.people_count) {
-          throw new HttpException(
-            'Запись прекращена. Мест не осталось',
-            HttpStatus.FORBIDDEN,
-          );
-        }
-        if (countNow + count > event.people_count) {
+        const isRecordCount = await this.checkRecordCount(body.eventsId, "group", Number(body.countPeople), event)
+        if (!isRecordCount) {
           throw new HttpException(
             'Запись прекращена. Мест не осталось',
             HttpStatus.FORBIDDEN,
@@ -244,6 +230,7 @@ export class RecordService {
             listPeople: file.filename,
             eventsId: Number(body.eventsId),
             phone: String(telephoneNumber),
+            createdAt: luxon.DateTime.local()
           },
         });
         if (newRecord) {
@@ -324,6 +311,7 @@ export class RecordService {
               select: {
                 title: true,
                 date: true,
+                times: true,
               },
             },
           },

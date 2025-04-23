@@ -67,8 +67,11 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
   ), [mest, paragraphDetailsStyle]);
 
   const isDatePassed = useMemo(() => {
-    const date = new Date(event.date);
-    return date < new Date();
+    const splitDate = event.date.split('T')[0]
+    const time = event.times
+    const eventDate = new Date(`${splitDate}T${time}`)
+    const currentDate = new Date()
+    return eventDate < currentDate
   }, [event.date]);
 
   return (
@@ -100,6 +103,7 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
           block
           className="font-lato"
           style={btn}
+          disabled={!mest}
         >
           Записаться индивидуально
         </Button>
@@ -108,6 +112,7 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
           onClick={openModalGroup}
           block
           style={btn}
+          disabled={!mest}
         >
           Записаться группой
         </Button>
