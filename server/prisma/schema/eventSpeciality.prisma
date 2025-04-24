@@ -1,7 +1,0 @@
-model EventSpeciality {
-    id Int @default(autoincrement()) @id
-    title String //Название специальности
-
-    //Связи
-    eventSpeciality Events[]
-}

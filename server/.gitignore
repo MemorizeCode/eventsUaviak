@@ -8,6 +8,10 @@
 .idea/**/tasks.xml
 .idea/dictionaries
 
+# prisma
+/generated/prisma/
+
+
 
 .uploads/*
 

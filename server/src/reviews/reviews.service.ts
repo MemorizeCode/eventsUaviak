@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/service/prisma.service';
 import { ReviewsDTO } from './dto/ReviewsDTO';
-
+import * as luxon from 'luxon';
 @Injectable()
 export class ReviewsService {
   constructor(private readonly prisma: PrismaService) {}
@@ -79,7 +79,6 @@ export class ReviewsService {
       if (e instanceof HttpException) {
         throw e;
       }
-      console.error(e);
       throw new HttpException(
         'Неизвестная ошибка. Попробуйте позже',
         HttpStatus.INTERNAL_SERVER_ERROR,

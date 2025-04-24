@@ -3,7 +3,6 @@ import { PrismaService } from 'src/service/prisma.service';
 import { RecordInvididualDto } from './record-invididual-dto/record-invididual-dto.interface';
 import { RecordGroupDTO } from './recorod-group-dto/RecordGroupDTO';
 import * as luxon from 'luxon';
-import { Events } from '@prisma/client';
 @Injectable()
 export class RecordService {
   constructor(private readonly prisma: PrismaService) { }
@@ -50,7 +49,7 @@ export class RecordService {
     return true
   }
 
-  private async checkRecordCount(eventsId: number, typeRecord: "individual" | "group", countPeople?: number, event?: Events) {
+  private async checkRecordCount(eventsId: number, typeRecord: "individual" | "group", countPeople?: number, event?: any) {
     const [records, recordGr] = await Promise.all([
       await this.prisma.recordInvididual.findMany({
         where: {
