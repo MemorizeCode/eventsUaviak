@@ -114,12 +114,15 @@ const RecordsEvents = memo(() => {
             dataIndex: "status",
             key: 'status',
             render: (_: string, action: FetchGetRecordsData) => {
-                const nowDate = new Date()
-                const eventDate = new Date(action.eventsDate)
-                if (nowDate > eventDate) {
-                    return <p style={{ color: "red" }}>Мероприятие прошло</p>
+                const now = new Date() //(Самара, GMT+4)
+                const eventDateStr = action.eventsDate.replace("Z", "")
+                const eventDate = new Date(eventDateStr)
+                
+                if (now > eventDate) {
+                  return <p style={{ color: "red" }}>Мероприятие прошло</p>;
+                } else {
+                  return <p style={{ color: "green" }}>Мероприятие будет</p>;
                 }
-                return <p style={{ color: "green" }}>Мероприятие будет</p>
             }
         },
         {

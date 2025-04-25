@@ -21,7 +21,7 @@ model Reviews {
   name      String
   title     String   @db.VarChar(255)
   stars     Int
-  createdAt DateTime @default(now())
+  createdAt String
 }
 
 model Events {

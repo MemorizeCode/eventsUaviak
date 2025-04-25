@@ -4,7 +4,6 @@ CREATE TABLE `User` (
     `login` VARCHAR(191) NOT NULL,
     `password` VARCHAR(191) NOT NULL,
     `role` ENUM('ADMIN', 'USER') NOT NULL DEFAULT 'USER',
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     UNIQUE INDEX `User_login_key`(`login`),
     PRIMARY KEY (`id`)
@@ -16,7 +15,7 @@ CREATE TABLE `Reviews` (
     `name` VARCHAR(191) NOT NULL,
     `title` VARCHAR(255) NOT NULL,
     `stars` INTEGER NOT NULL,
-    `createdAt` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

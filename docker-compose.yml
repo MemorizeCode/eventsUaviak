@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   client:
     build:
@@ -21,31 +23,34 @@ services:
     ports:
       - "3000:3000"
     environment:
+      # - DATABASE_URL=mysql://root:root@eventsUaviak:3306/eventsUaviak?connection_limit=5&connect_timeout=30
       - DATABASE_URL=mysql://root:root@host.docker.internal:3306/eventsUaviak?connection_limit=5&connect_timeout=30
       - PRISMA_CLI_QUERY_ENGINE_TYPE=binary
       - NODE_TLS_REJECT_UNAUTHORIZED=0
-      - VITE_API_BACKEND=http://localhost:3000/api/
-      - CORS_ORIGIN=http://localhost:80
+      - VITE_API_BACKEND=http://server:3000/api/
+      - CORS_ORIGIN=http://client:80
+      - TZ=Europe/Moscow
     networks:
       - app-network
     depends_on:
       db:
         condition: service_healthy
 
-
   db:
     image: mysql:8.0
     ports:
       - "3307:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=eventsUaviak
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: eventsUaviak
+      TZ: Europe/Moscow
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - app-network
     healthcheck:
-      test: ["CMD", "mysql", "-u", "root", "-proot", "-e", "SELECT 1 FROM DUAL WHERE EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'eventsUaviak');"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
       interval: 5s
       timeout: 10s
       retries: 10
@@ -55,4 +60,4 @@ volumes:
 
 networks:
   app-network:
-    driver: bridge 
+    driver: bridge

@@ -139,7 +139,7 @@ export class RecordService {
             class: body.class,
             telephoneNumber: telephoneNumber,
             eventsId: Number(body.eventsId),
-            createdAt: luxon.DateTime.local().setZone('UTC+3').toJSDate(), // Для Москвы
+            createdAt: luxon.DateTime.local().setZone('UTC+4').toJSDate(), 
           },
         });
         console.log(luxon.DateTime.local().toISO())
@@ -229,7 +229,7 @@ export class RecordService {
             listPeople: file.filename,
             eventsId: Number(body.eventsId),
             phone: String(telephoneNumber),
-            createdAt: luxon.DateTime.local()
+            createdAt: luxon.DateTime.local().setZone('UTC+4').toJSDate(), 
           },
         });
         if (newRecord) {
@@ -253,47 +253,6 @@ export class RecordService {
 
   async getRecords() {
     try {
-      // const allRecords = await this.prisma.events.findMany({
-      //   select: {
-      //     id: true,
-      //     title: true,
-      //     date: true,
-      //     recordInv: {
-      //       select: {
-      //         id: true,
-      //         telephoneNumber: true,
-      //         firstName: true,
-      //         lastName: true,
-      //         surname: true,
-      //         school: true,
-      //         createdAt: true,
-      //       },
-      //       orderBy: {
-      //         id: 'desc'
-      //       }
-      //     },
-      //     recordGr: {
-      //       select: {
-      //         id: true,
-      //         firstNameAttendant: true,
-      //         lastNameAttendant: true,
-      //         SurnameAttendant: true,
-      //         phone: true,
-      //         school: true,
-      //         countPeople: true,
-      //         createdAt: true,
-      //       },
-      //       orderBy: {
-      //         id: 'desc'
-      //       }
-      //     }},
-      //     // orderBy: {
-      //     //   createdAt: 'desc'
-      //     // }
-      // })
-
-      // const filterRecords = allRecords.filter(item => item.recordInv.length > 0 || item.recordGr.length > 0)
-
       const [recordGroup, allRecordsInv] = await Promise.all([
         this.prisma.recordGroup.findMany({
           select: {

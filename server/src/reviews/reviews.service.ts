@@ -24,6 +24,7 @@ export class ReviewsService {
             title: body.reviews,
             name: body.name,
             stars: Number(body.stars),
+            createdAt: luxon.DateTime.now().toISO(),
           },
         });
       }

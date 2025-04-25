@@ -13,6 +13,7 @@ import {
     StatsEventAsync
 } from "@/features/Admin";
 
+import message  from "antd/es/message";
 import Button from "antd/es/button";
 import Card from "antd/es/card/Card";
 import Flex from "antd/es/flex";    
@@ -29,7 +30,13 @@ const AdminPage = () => {
     }, [dispatch])
 
     async function loadSpecial() {
-        await $api.post('/loadSpecial')
+        const response = await $api.post('/loadSpecial')
+        if(response.status === 200) {
+            message.success('Специальности успешно загружены')
+        }
+        else{
+            message.error(response?.data?.message)
+        }
         dispatch(fetchAllSpecial())
     }
 
@@ -82,7 +89,6 @@ const AdminPage = () => {
                 <Suspense fallback={<div>Loading stats...</div>}>
                     <StatsEventAsync />
                 </Suspense>
-
             </Flex>
         </>
     );

@@ -1,26 +1,30 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/service/prisma.service';
-
+import * as luxon from 'luxon';
 @Injectable()
 export class OtchetService {
-  constructor(private readonly prisma: PrismaService) {}
-
+  constructor(private readonly prisma: PrismaService) { }
   async getPeopleYear(year) {
     try {
+
+      const targetYear = Number(year);
+      const startOfYear = luxon.DateTime.local().set({ year: targetYear, month: 1, day: 1 }).toISO(); // Начало года
+      const currentDateUTC = luxon.DateTime.local(); // текущая дата
+    
+      const endOfDay = currentDateUTC.year === targetYear ? 
+      currentDateUTC.toISO() : 
+      luxon.DateTime.local().set({ year: targetYear, month: 12, day: 31 }).toISO(); // Конец года
+
       const [dataInv, dataGr] = await Promise.all([
         this.prisma.recordInvididual.findMany({
           where: {
             events: {
               is: {
                 date: {
-                  gte: new Date(Number(year), 0, 1),
-                  lte: new Date(Number(year), 11, 31),
+                  gte: startOfYear, // Начало года
+                  lte: endOfDay,   // Конец года
                 },
               },
-            },
-            createdAt: {
-              gte: new Date(Number(year), 0, 1),
-              lte: new Date(Number(year), 11, 31),
             },
           },
           include: {
@@ -32,14 +36,10 @@ export class OtchetService {
             events: {
               is: {
                 date: {
-                  gte: new Date(Number(year), 0, 1),
-                  lte: new Date(Number(year), 11, 31),
+                  gte: startOfYear, // Начало года
+                  lte: endOfDay,   // Конец года
                 },
               },
-            },
-            createdAt: {
-              gte: new Date(Number(year), 0, 1),
-              lte: new Date(Number(year), 11, 31),
             },
           },
           include: {
@@ -48,20 +48,18 @@ export class OtchetService {
         }),
       ]);
 
-      const filterDataInv = dataInv.filter((e) => e.events.date < new Date());
-      const filterDataGr = dataGr.filter((e) => e.events.date < new Date());
-
-      const dataSvobodnoMesInGroup = filterDataGr.reduce((acc, rec) => {
+      const resultCountGr = dataGr.reduce((acc, rec) => {
         const count = Number(rec.countPeople) || 0;
         return count + acc;
       }, 0);
 
-      const dataSvobodnoMesInIndividual = filterDataInv.length;
-      const dataSvobodnoMes =
-        dataSvobodnoMesInGroup + dataSvobodnoMesInIndividual;
+      const resultCountInv = dataInv.length;
+      
+      const resultCount = resultCountGr + resultCountInv
 
-      return { data: dataSvobodnoMes };
+      return { data: resultCount };
     } catch (e) {
+      console.log(e)
       if (e instanceof HttpException) {
         throw e;
       }
@@ -77,20 +75,22 @@ export class OtchetService {
       if (!m || !y) {
         throw new HttpException('Нету месяца или года', HttpStatus.BAD_REQUEST);
       }
+      
+      const currentDateUTC = luxon.DateTime.local(); 
+      const startOfMonth = luxon.DateTime.local().set({ year: y, month: m, day: 1 }).toISO(); 
+      const endOfMonth = luxon.DateTime.local().set({ year: y, month: m, day: 1 }).plus({ months: 1 }).minus({ days: 1 }).toISO(); 
+      const endOfDay = currentDateUTC < luxon.DateTime.fromISO(endOfMonth) ? currentDateUTC.toISO() : endOfMonth; 
+
       const [dataInv, dataGr] = await Promise.all([
         this.prisma.recordInvididual.findMany({
           where: {
             events: {
               is: {
                 date: {
-                  gte: new Date(Number(y), Number(m - 1), 1),
-                  lte: new Date(Number(y), Number(m - 1), 31),
+                  gte: startOfMonth, // Начало месяца
+                  lte: endOfDay,     // Конец диапазона
                 },
               },
-            },
-            createdAt: {
-              gte: new Date(Number(y), Number(m - 1), 1),
-              lte: new Date(Number(y), Number(m - 1), 31),
             },
           },
           include: {
@@ -102,14 +102,10 @@ export class OtchetService {
             events: {
               is: {
                 date: {
-                  gte: new Date(Number(y), Number(m - 1), 1),
-                  lte: new Date(Number(y), Number(m - 1), 31),
+                  gte: startOfMonth, // Начало месяца
+                  lte: endOfDay,     // Конец диапазона
                 },
               },
-            },
-            createdAt: {
-              gte: new Date(Number(y), Number(m - 1), 1),
-              lte: new Date(Number(y), Number(m - 1), 31),
             },
           },
           include: {
@@ -117,20 +113,17 @@ export class OtchetService {
           },
         }),
       ]);
-
-      const filterDataInv = dataInv.filter((e) => e.events.date < new Date());
-      const filterDataGr = dataGr.filter((e) => e.events.date < new Date());
-
-      const dataSvobodnoMesInGroup = filterDataGr.reduce((acc, rec) => {
+      const resultCountGr = dataGr.reduce((acc, rec) => {
         const count = Number(rec.countPeople) || 0;
         return count + acc;
       }, 0);
 
-      const dataSvobodnoMesInIndividual = filterDataInv.length;
-      const dataSvobodnoMes =
-        dataSvobodnoMesInGroup + dataSvobodnoMesInIndividual;
+      const resultCountInv = dataInv.length;
+      
+      const resultCount = resultCountGr + resultCountInv
 
-      return { data: dataSvobodnoMes };
+      return { data: resultCount };
+
     } catch (e) {
       console.log(e);
       if (e instanceof HttpException) {

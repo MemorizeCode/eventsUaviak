@@ -13,7 +13,7 @@
 
 
 
-.uploads/*
+/uploads/*
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/

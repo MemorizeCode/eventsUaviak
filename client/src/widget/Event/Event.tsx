@@ -103,7 +103,7 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
           block
           className="font-lato"
           style={btn}
-          disabled={!mest}
+          disabled={!mest || isDatePassed}
         >
           Записаться индивидуально
         </Button>
@@ -112,7 +112,7 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
           onClick={openModalGroup}
           block
           style={btn}
-          disabled={!mest}
+          disabled={!mest || isDatePassed}
         >
           Записаться группой
         </Button>

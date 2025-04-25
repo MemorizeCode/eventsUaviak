@@ -26,6 +26,7 @@ export class EventsService {
         );
       }
       const dateTime = luxon.DateTime.fromISO(`${body.date}T${body.times}`, { zone: 'UTC' });
+      console.log(dateTime.toISO())
       await this.prisma.events.create({
         data: {
           title: body.title,
@@ -192,13 +193,13 @@ export class EventsService {
         events.map(async (event) => {
           const [records, recordGr] = await Promise.all([
             this.prisma.recordInvididual.findMany({
-              where: { eventsId: event.id },
+              where: { eventsId: Number(event.id) },
               orderBy: {
                 createdAt: 'desc',
               },
             }),
             this.prisma.recordGroup.findMany({
-              where: { eventsId: event.id },
+              where: { eventsId: Number(event.id) },
               orderBy: {
                 createdAt: 'desc',
               },
