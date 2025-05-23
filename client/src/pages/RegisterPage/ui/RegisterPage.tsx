@@ -24,7 +24,7 @@ export const RegisterPage: FC = () => {
             navigate('/login')
         }
         else{
-            message.success("Ошибка: ", response.data)
+            message.error(response?.data?.message)
         }
     }
 

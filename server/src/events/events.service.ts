@@ -127,8 +127,11 @@ export class EventsService {
         where: { id: Number(id) },
         select: {
           isDelete: true,
+          date: true,
+          times: true,
         },
       });
+
       const [recordInv, recordGr] = await Promise.all([
         this.prisma.recordInvididual.findMany({
           where: { eventsId: Number(id) },
@@ -137,6 +140,16 @@ export class EventsService {
           where: { eventsId: Number(id) },
         }),
       ]);
+
+
+      //ДОПИСАТЬ ЕСЛИ ДАТА МЕРОПРИЯТИЯ ПРОШЛО, можно удалять
+      if(isEvent.date < luxon.DateTime.now()) {
+        await this.prisma.events.update({
+          where: { id: Number(id) },
+          data: { isDelete: true },
+        });
+        return { message: 'Мероприятие удалено' };
+      }
 
       if (recordInv.length > 0 || recordGr.length > 0) {
         throw new HttpException(

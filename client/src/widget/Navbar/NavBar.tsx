@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userSliceActions } from "@/entities/User/model/store/userSlice";
 import { RootState } from "@/app/providers/store/store";
 import $api from "@/app/config/api";
-
+import logo from "@/assets/logo.svg";
 const { Header } = Layout;
 
 const NavBar = memo(() => {
@@ -29,18 +29,22 @@ const NavBar = memo(() => {
   };
 
   const logOut = async () => {
-    try{
+    try {
       await $api.post('/auth/logout')
       dispatch(userSliceActions.setAuth(false));
       dispatch(userSliceActions.setRole("USER"));
       localStorage.removeItem("accessToken");
-    }catch(error){
+    } catch (error) {
       //ошибка логаута
     }
   };
 
   //основа
   const mainMenuItems = [
+    {
+      key: "0",
+      label: <img src={logo} alt="logo" />
+    },
     {
       key: "1",
       label: <NavLink to="/" style={{ fontSize: "16px" }}>ГЛАВНАЯ</NavLink>,
@@ -133,7 +137,8 @@ const NavBar = memo(() => {
               mode="horizontal"
               style={{ background: "white" }}
               items={mainMenuItems}
-            />
+            >
+            </Menu>
           </Col>
           <Col xs={2} sm={2} md={0} style={{ background: "white" }}>
             <Button type="primary" onClick={showDrawer}>
@@ -151,7 +156,7 @@ const NavBar = memo(() => {
           <Menu
             mode="vertical"
             style={{ background: "white" }}
-            items={drawerMenuItems} 
+            items={drawerMenuItems}
           />
         </Drawer>
       </Header>

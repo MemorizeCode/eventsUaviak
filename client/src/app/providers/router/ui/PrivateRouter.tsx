@@ -13,6 +13,8 @@ const PrivateRouter = memo(({children}:PrivateRouterProps) => {
     const isLoading = useSelector((state:RootState)=>state?.user?.isLoading)
     const auth = useSelector((state:RootState)=>state?.user?.auth)
     const role = useSelector((state:RootState)=>state?.user?.role)
+
+
     if(isLoading) {
         return null
     }
