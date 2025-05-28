@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
 import { AdminGuard } from './guard/admin.guard';
 
@@ -8,6 +8,7 @@ export class AppController {
 
   @UseGuards(AdminGuard)
   @Post('/loadSpecial')
+  @HttpCode(200)
   async loadSpecial() {
     return await this.appService.loadSpecial();
   }

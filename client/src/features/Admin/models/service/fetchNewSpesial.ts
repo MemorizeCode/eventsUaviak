@@ -16,7 +16,7 @@ export const fetchNewSpesial = createAsyncThunk<NewSpesialResponse, string, { re
             return thunkAPI.rejectWithValue({ message: "Название специальности не может быть пустым", error: 'warning' })
         }
         const response = await $api.post<NewSpesialResponse>("/spesial/newSpecial", { title })
-        if (response.status === 200) {
+        if (response.status === 200 || response.status == 204) {
             return response.data
         }
         return thunkAPI.rejectWithValue({ message: response.data.message, error: 'error' })

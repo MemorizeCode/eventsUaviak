@@ -21,6 +21,7 @@ const NewSpesial = memo(() => {
             const response = await dispatch(fetchNewSpesial(title))
             const payload = response.payload as NewSpesialError
             if(response.meta.requestStatus === "fulfilled"){
+                console.log(response)
                 message.success(payload.message)
                 setTitle("")
                 dispatch(fetchAllSpecial())
