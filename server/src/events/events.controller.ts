@@ -38,7 +38,7 @@ export class EventsController {
   @HttpCode(200)
   async deleteEvent(@Query() query) {
     const { id } = query;
-    const result = await this.eventsService.deleteEvent(id);
+    const result = await this.eventsService.deleteEvent(Number(id));
     return result;
   }
 

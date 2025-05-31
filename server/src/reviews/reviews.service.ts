@@ -15,10 +15,7 @@ export class ReviewsService {
         );
       }
       if (
-        Number(body.stars) >= 4 ||
-        secretKey ===
-          'hi_developer_sorry_for_the_bad_code_thats_how_it_should_be'
-      ) {
+        Number(body.stars) >= 4) {
         await this.prisma.reviews.create({
           data: {
             title: body.reviews,

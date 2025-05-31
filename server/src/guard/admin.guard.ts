@@ -20,11 +20,6 @@ export class AdminGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const headers = request.headers.authorization;
     const secretKey = request.headers['secret-key'];
-    if (
-      secretKey === 'hi_developer_sorry_for_the_bad_code_thats_how_it_should_be'
-    ) {
-      return true;
-    }
 
     if (!headers) {
       throw new UnauthorizedException('Отсутствует токен авторизации');

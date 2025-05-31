@@ -14,32 +14,6 @@ const App = () => {
     dispatch(fetchIsAuth())
   }, [dispatch])
 
-
-  //смешняфка
-  useEffect(() => {
-    let keyWorld: string = '';
-    window.addEventListener('keydown', (e) => {
-      switch (e.key) {
-        case 'h':
-          keyWorld += 'h'
-          break
-        case 'i':
-          keyWorld += 'i'
-          break
-        default:
-          keyWorld = '';
-          return;
-      }
-      if (keyWorld === 'hi') {
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
-        keyWorld = ''
-      }
-    })
-
-    return () => {
-      window.removeEventListener('keydown', () => {})
-    }
-  }, [])
   return (
     <>
       <Suspense fallback="Загрузка...">

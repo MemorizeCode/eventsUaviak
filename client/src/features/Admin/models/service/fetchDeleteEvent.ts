@@ -20,10 +20,16 @@ export interface DeleteEventError {
 export const fetchDeleteEvent = createAsyncThunk<DeleteEventResponse, DeleteEventData, {rejectValue: DeleteEventError}>("adminDeleteEvent",
     async (data: DeleteEventData, thunkAPI) => {
         try {
-            const idEvent = Number(data.idEvent)
-            if (!idEvent) {
+            const idEvent = data.idEvent
+            if(!idEvent){
                 return thunkAPI.rejectWithValue({
                     message: "Поле пустое",
+                    status: "warning",
+                });
+            }
+            if (!Number(idEvent)) {
+                return thunkAPI.rejectWithValue({
+                    message: "Поле должно быть числом",
                     status: "warning",
                 });
             }

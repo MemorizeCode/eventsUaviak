@@ -11,14 +11,7 @@ export class AuthMiddleware implements NestMiddleware {
   async use(req: any, res: any, next: any) {
     //Check Token
     const header = req.headers.authorization;
-
     const secretKey = req.headers['secret-key']?.trim();
-    if (
-      secretKey === 'hi_developer_sorry_for_the_bad_code_thats_how_it_should_be'
-    ) {
-      next();
-      return;
-    }
 
     if (!header) {
       throw new UnauthorizedException('Отсутствует токен авторизации');

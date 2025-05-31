@@ -6,14 +6,17 @@ export class OtchetService {
   constructor(private readonly prisma: PrismaService) { }
   async getPeopleYear(year) {
     try {
-
       const targetYear = Number(year);
-      const startOfYear = luxon.DateTime.local().set({ year: targetYear, month: 1, day: 1 }).toISO(); // Начало года
-      const currentDateUTC = luxon.DateTime.local(); // текущая дата
-    
-      const endOfDay = currentDateUTC.year === targetYear ? 
-      currentDateUTC.toISO() : 
-      luxon.DateTime.local().set({ year: targetYear, month: 12, day: 31 }).toISO(); // Конец года
+
+      const currentDateUTC = luxon.DateTime.utc(); 
+      const ulyanovskTime = currentDateUTC.setZone('Europe/Ulyanovsk');
+      console.log(ulyanovskTime)
+
+      const ulyanovskTimeH = ulyanovskTime.hour
+      const ulyanovskTimeM = ulyanovskTime.minute
+      const ulyanovskTimeS = ulyanovskTime.second
+      const startOfYear = luxon.DateTime.utc(targetYear, 1, 1).toISO();
+      const endOfYesDay = luxon.DateTime.utc(targetYear,currentDateUTC.month, currentDateUTC.day, ulyanovskTimeH, ulyanovskTimeM, ulyanovskTimeS).toISO()
 
       const [dataInv, dataGr] = await Promise.all([
         this.prisma.recordInvididual.findMany({
@@ -22,7 +25,7 @@ export class OtchetService {
               is: {
                 date: {
                   gte: startOfYear, // Начало года
-                  lte: endOfDay,   // Конец года
+                  lte: endOfYesDay,   // Конец года
                 },
               },
             },
@@ -37,7 +40,7 @@ export class OtchetService {
               is: {
                 date: {
                   gte: startOfYear, // Начало года
-                  lte: endOfDay,   // Конец года
+                  lte: endOfYesDay,   // Конец года
                 },
               },
             },
@@ -76,10 +79,19 @@ export class OtchetService {
         throw new HttpException('Нету месяца или года', HttpStatus.BAD_REQUEST);
       }
       
-      const currentDateUTC = luxon.DateTime.local(); 
-      const startOfMonth = luxon.DateTime.local().set({ year: y, month: m, day: 1 }).toISO(); 
-      const endOfMonth = luxon.DateTime.local().set({ year: y, month: m, day: 1 }).plus({ months: 1 }).minus({ days: 1 }).toISO(); 
-      const endOfDay = currentDateUTC < luxon.DateTime.fromISO(endOfMonth) ? currentDateUTC.toISO() : endOfMonth; 
+      const year = Number(y)
+      const month = Number(m)
+
+      const currentDateUTC = luxon.DateTime.utc(); 
+      const ulyanovskTime = currentDateUTC.setZone('Europe/Ulyanovsk');
+      console.log(ulyanovskTime)
+
+      const ulyanovskTimeH = ulyanovskTime.hour
+      const ulyanovskTimeM = ulyanovskTime.minute
+      const ulyanovskTimeS = ulyanovskTime.second
+      const startOfYear = luxon.DateTime.utc(year, month, 1).toISO();
+      const endOfYesDay = luxon.DateTime.utc(year, month, currentDateUTC.day, ulyanovskTimeH, ulyanovskTimeM, ulyanovskTimeS).toISO()
+      
 
       const [dataInv, dataGr] = await Promise.all([
         this.prisma.recordInvididual.findMany({
@@ -87,8 +99,8 @@ export class OtchetService {
             events: {
               is: {
                 date: {
-                  gte: startOfMonth, // Начало месяца
-                  lte: endOfDay,     // Конец диапазона
+                  gte: startOfYear, // Начало месяца
+                  lte: endOfYesDay,     // Конец диапазона
                 },
               },
             },
@@ -102,8 +114,8 @@ export class OtchetService {
             events: {
               is: {
                 date: {
-                  gte: startOfMonth, // Начало месяца
-                  lte: endOfDay,     // Конец диапазона
+                  gte: startOfYear, // Начало месяца
+                  lte: endOfYesDay,     // Конец диапазона
                 },
               },
             },

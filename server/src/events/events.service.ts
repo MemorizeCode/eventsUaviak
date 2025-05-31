@@ -74,14 +74,17 @@ export class EventsService {
       });
 
       if (event.isDelete) {
-        throw new HttpException('Мероприятие удалено', HttpStatus.NOT_FOUND);
+        throw new HttpException('Мероприятие удалено, его нельзя редактировать', HttpStatus.NOT_FOUND);
       }
 
       const updateData: any = {};
 
+      const dateTime = luxon.DateTime.fromISO(`${body.date}T${body.times}`, { zone: 'UTC' });
+
+
       if (body.title) updateData.title = String(body.title);
       if (body.description) updateData.description = String(body.description);
-      if (body.date) updateData.date = new Date(body.date);
+      if (body.date) updateData.date = dateTime.toISO();
       if (body.times) updateData.times = String(body.times);
       if (body.duration) updateData.duration = Number(body.duration);
       if (body.cabinet) updateData.cabinet = String(body.cabinet);
@@ -132,6 +135,10 @@ export class EventsService {
         },
       });
 
+      if(!isEvent){
+        throw new HttpException("Мероприятие не найдено", HttpStatus.NOT_FOUND)
+      }
+
       const [recordInv, recordGr] = await Promise.all([
         this.prisma.recordInvididual.findMany({
           where: { eventsId: Number(id) },
@@ -140,16 +147,6 @@ export class EventsService {
           where: { eventsId: Number(id) },
         }),
       ]);
-
-
-      //ДОПИСАТЬ ЕСЛИ ДАТА МЕРОПРИЯТИЯ ПРОШЛО, можно удалять
-      if(isEvent.date < luxon.DateTime.now()) {
-        await this.prisma.events.update({
-          where: { id: Number(id) },
-          data: { isDelete: true },
-        });
-        return { message: 'Мероприятие удалено' };
-      }
 
       if (recordInv.length > 0 || recordGr.length > 0) {
         throw new HttpException(
@@ -164,16 +161,24 @@ export class EventsService {
           HttpStatus.BAD_REQUEST,
         );
       }
+
+      if(isEvent.date < luxon.DateTime.now()) {
+        await this.prisma.events.update({
+          where: { id: Number(id) },
+          data: { isDelete: true },
+        });
+        return { message: 'Мероприятие удалено' };
+      }
+
+
       await this.prisma.events.update({
         where: { id: Number(id) },
         data: { isDelete: true },
       });
       return { message: 'Мероприятие удалено' };
+
     } catch (e) {
-      console.log(e);
-      if (e.code === 'P2025') {
-        throw new HttpException('Мероприятие не найдено', HttpStatus.NOT_FOUND);
-      }
+      console.log(e)
       if (e instanceof HttpException) {
         throw e;
       }
