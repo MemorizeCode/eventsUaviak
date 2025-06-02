@@ -137,7 +137,7 @@ export class OtchetService {
       return { data: resultCount };
 
     } catch (e) {
-      console.log(e);
+
       if (e instanceof HttpException) {
         throw e;
       }

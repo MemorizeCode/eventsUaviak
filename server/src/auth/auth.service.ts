@@ -22,7 +22,6 @@ export class AuthService {
 
   async login(login: string, password: string, keys) {
     try {
-
       if (!login || typeof login !== 'string') {
         throw new BadRequestException('Логин обязателен');
       }
@@ -66,6 +65,7 @@ export class AuthService {
         refreshToken,
         role: user.role,
       };
+
     } catch (e) {
       this.logger.error(`LOGIN ERROR: ${e.message} | ${e.stack}`);
       if (e instanceof HttpException) {
@@ -119,6 +119,7 @@ export class AuthService {
           role: newUser.role,
         },
       };
+
     } catch (e) {
       this.logger.error(`REGISTER ERROR: ${e.message} | ${e.stack}`);
       if (e instanceof HttpException) {
@@ -160,6 +161,7 @@ export class AuthService {
         refreshToken: newRefreshToken,
         role: user.role,
       };
+      
     } catch (e) {
       this.logger.error(`Token refresh error: ${e.message}`);
       if (e instanceof HttpException) {

@@ -13,9 +13,33 @@ const ReviewsPage = () => {
     const { Title } = Typography;
     const dispatch = useDispatch<AppDispatch>()
 
+    const secretWord = "badrev"
+    let youSecretWord = ""
+
+    function secretHAHA(e: KeyboardEvent){
+        youSecretWord+= e.key
+        if(youSecretWord.length == 6){
+            if(youSecretWord === secretWord){
+                dispatch(fetchGetReviews("bad"))
+                youSecretWord = ""
+            }
+            else{
+                youSecretWord = ""
+            }
+        }
+        else if(youSecretWord.length > 6){
+            youSecretWord = ""
+        }
+    }
 
     useEffect(() => {
+        window.addEventListener("keyup", secretHAHA)
+
         dispatch(fetchGetReviews())
+
+        return () => {
+            window.removeEventListener('keyup', secretHAHA)
+        }
     }, [dispatch])
 
 

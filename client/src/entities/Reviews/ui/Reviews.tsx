@@ -3,6 +3,7 @@ import Rate from 'antd/es/rate';
 import Typography from 'antd/es/typography';
 import { ReviewsSchema } from '../model/service/fetchGetReviews';
 
+
 const Reviews = (props:{reviews:ReviewsSchema}) => {
     const {id , name, title, stars} = props.reviews
     const { Title, Paragraph } = Typography;

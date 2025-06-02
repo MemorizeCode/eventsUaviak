@@ -20,7 +20,12 @@ export const reviewsSlice = createSlice({
             //загрузка отзывов
         })
         builder.addCase(fetchGetReviews.fulfilled, (state, action:PayloadAction<FetchGetReviewsResponse>)=>{
-            state.reviewsList = action.payload.data
+            if(action.payload.key === "bad"){
+                state.reviewsList = action.payload.data
+            }
+            else{
+                state.reviewsList = action.payload.data?.filter((review)=> !review.isDeleted)
+            }
         })
         builder.addCase(fetchGetReviews.rejected, () => {
 

@@ -27,7 +27,6 @@ export class EventsService {
       }
 
       const dateTime = luxon.DateTime.fromISO(`${body.date}T${body.times}`, { zone: 'UTC' });
-
       const currentDateUTC = luxon.DateTime.utc(); 
       const ulyanovskTime = currentDateUTC.setZone('Europe/Ulyanovsk');
 
@@ -171,15 +170,15 @@ export class EventsService {
         return { message: 'Мероприятие удалено' };
       }
 
-
+      // это наверное вообще никогда не вызовеися
       await this.prisma.events.update({
         where: { id: Number(id) },
         data: { isDelete: true },
       });
+
       return { message: 'Мероприятие удалено' };
 
     } catch (e) {
-      console.log(e)
       if (e instanceof HttpException) {
         throw e;
       }
@@ -236,6 +235,29 @@ export class EventsService {
         }),
       );
 
+      // const result = await Promise.all(
+      //   events.map(async (event) => {
+      //     const [individualCount, groupCount] = await Promise.all([
+      //       this.prisma.recordInvididual.count({
+      //         where: { eventsId: Number(event.id) },
+      //       }),
+      //       this.prisma.recordGroup.aggregate({
+      //         where: { eventsId: Number(event.id) },
+      //         _sum: {
+      //           countPeople: true,
+      //         },
+      //       }),
+      //     ]);
+      
+      //     const totalCount = individualCount + (groupCount._sum.countPeople || 0);
+      
+      //     return {
+      //       event,
+      //       ostalosMest: event.people_count - totalCount,
+      //     };
+      //   }),
+      // );
+
       const total = await this.prisma.events.count({
         where: {
           isDelete: false,
@@ -244,7 +266,7 @@ export class EventsService {
 
       return { data: result, message: 'Мероприятия получены', total: total };
     } catch (e) {
-      console.log(e);
+
       throw new HttpException(
         'Ошибка при получении мероприятий',
         HttpStatus.INTERNAL_SERVER_ERROR,

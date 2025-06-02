@@ -27,7 +27,6 @@ export class ReviewsService {
       }
       return { message: 'Отзыв создан' };
     } catch (e) {
-      console.log(e);
       if (e instanceof HttpException) {
         throw e;
       }
@@ -46,7 +45,7 @@ export class ReviewsService {
       }
       return { message: 'Отзывов нет.' };
     } catch (e) {
-      console.log(e);
+
       if (e instanceof HttpException) {
         throw e;
       }
@@ -65,10 +64,13 @@ export class ReviewsService {
         },
       });
       if (isReviews) {
-        await this.prisma.reviews.delete({
+        await this.prisma.reviews.update({
           where: {
             id: Number(id),
           },
+          data: {
+            isDeleted: true
+          }
         });
         return { message: 'Успешно удален отзыв' };
       }
