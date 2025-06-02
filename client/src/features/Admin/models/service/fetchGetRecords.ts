@@ -23,7 +23,7 @@ export interface FetchGetRecordsData {
     eventsDate: string
     recordDate: string
     type: string
-    times: string
+    time: string
 }
 
 export const fetchGetRecords = createAsyncThunk<FetchGetRecordsResponse, void, {rejectValue: FetchGetRecordsError} >("fetchGetRecords", async (_, thunkAPI)=>{

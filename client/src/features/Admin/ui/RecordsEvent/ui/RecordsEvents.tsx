@@ -100,8 +100,7 @@ const RecordsEvents = memo(() => {
             dataIndex: 'time',
             key: 'time',
             render: (_: string, action: FetchGetRecordsData) => {
-                const splitData = action.eventsDate?.split('T')[1].split(':');
-                return `${splitData[0]}:${splitData[1]}`
+                return action.time
             }
         },
         {
@@ -117,7 +116,7 @@ const RecordsEvents = memo(() => {
                 const now = new Date() //(Самара, GMT+4)
                 const eventDateStr = action.eventsDate.replace("Z", "")
                 const eventDate = new Date(eventDateStr)
-                
+
                 if (now > eventDate) {
                   return <p style={{ color: "red" }}>Мероприятие прошло</p>;
                 } else {

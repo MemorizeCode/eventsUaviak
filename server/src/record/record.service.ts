@@ -290,6 +290,7 @@ export class RecordService {
               select: {
                 title: true,
                 date: true,
+                times: true
               },
             },
           },
@@ -310,6 +311,7 @@ export class RecordService {
         eventsDate: record.events.date,
         recordDate: record.createdAt,
         listPeople: record.listPeople,
+        time: record.events.times,
         type: 'Групповая',
       }));
 
@@ -323,6 +325,7 @@ export class RecordService {
         eventsTitle: record.events.title,
         eventsDate: record.events.date,
         recordDate: record.createdAt,
+        time: record.events.times,
         type: 'Индивидуальная', // Исправлена опечатка
       }));
 

@@ -32,7 +32,7 @@ export const fetchEditEvent = createAsyncThunk<EditEventResponse, EditEventData,
         try {
             if (!idEvent) {
                 return thunkAPI.rejectWithValue({
-                    message: "Поле пустое",
+                    message: "Поле ID обязательное",
                     status: "warning",
                 })
             }

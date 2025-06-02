@@ -25,8 +25,12 @@ export class EventsService {
           HttpStatus.BAD_REQUEST,
         );
       }
+
       const dateTime = luxon.DateTime.fromISO(`${body.date}T${body.times}`, { zone: 'UTC' });
-      console.log(dateTime.toISO())
+
+      const currentDateUTC = luxon.DateTime.utc(); 
+      const ulyanovskTime = currentDateUTC.setZone('Europe/Ulyanovsk');
+
       await this.prisma.events.create({
         data: {
           title: body.title,
@@ -39,6 +43,7 @@ export class EventsService {
           whoClasses: String(body.whoClasses),
           specialityId: Number(body.specialityId),
           prepod: body.prepod,
+          createdAt: ulyanovskTime
         },
       });
       return { message: 'Мероприятие создано.' };
@@ -68,23 +73,18 @@ export class EventsService {
 
       const event = await this.prisma.events.findUnique({
         where: { id: Number(body.id) },
-        select: {
-          isDelete: true,
-        },
       });
 
       if (event.isDelete) {
         throw new HttpException('Мероприятие удалено, его нельзя редактировать', HttpStatus.NOT_FOUND);
       }
 
-      const updateData: any = {};
-
+      const updateData: any = {};      
       const dateTime = luxon.DateTime.fromISO(`${body.date}T${body.times}`, { zone: 'UTC' });
-
 
       if (body.title) updateData.title = String(body.title);
       if (body.description) updateData.description = String(body.description);
-      if (body.date) updateData.date = dateTime.toISO();
+      if (body.date) updateData.date = dateTime.toISO()
       if (body.times) updateData.times = String(body.times);
       if (body.duration) updateData.duration = Number(body.duration);
       if (body.cabinet) updateData.cabinet = String(body.cabinet);
@@ -102,6 +102,7 @@ export class EventsService {
 
       return { message: 'Мероприятие обновлено.' };
     } catch (e) {
+      console.log(e)
       if (e.code === 'P2025') {
         throw new HttpException('Мероприятие не найдено', HttpStatus.NOT_FOUND);
       }
@@ -135,7 +136,7 @@ export class EventsService {
         },
       });
 
-      if(!isEvent){
+      if (!isEvent) {
         throw new HttpException("Мероприятие не найдено", HttpStatus.NOT_FOUND)
       }
 
@@ -162,7 +163,7 @@ export class EventsService {
         );
       }
 
-      if(isEvent.date < luxon.DateTime.now()) {
+      if (isEvent.date < luxon.DateTime.now()) {
         await this.prisma.events.update({
           where: { id: Number(id) },
           data: { isDelete: true },
