@@ -326,7 +326,7 @@ export class RecordService {
         eventsDate: record.events.date,
         recordDate: record.createdAt,
         time: record.events.times,
-        type: 'Индивидуальная', // Исправлена опечатка
+        type: 'Индивидуальная', 
       }));
 
       const result = [...individualRecords, ...groupRecords];

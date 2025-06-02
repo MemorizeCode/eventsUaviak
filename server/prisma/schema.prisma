@@ -1,7 +1,6 @@
-
 generator client {
   provider = "prisma-client-js"
-  // output   = "../node_modules/.prisma/client"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -10,42 +9,44 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  login     String   @unique
-  password  String
-  role      ROLES    @default(USER)
+  id       Int    @id @default(autoincrement())
+  login    String @unique
+  password String
+  role     ROLES  @default(USER)
 }
 
 model Reviews {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   name      String
-  title     String   @db.VarChar(255)
+  title     String  @db.VarChar(255)
   stars     Int
   createdAt String
+  isDeleted Boolean @default(false)
+  isBad     Boolean @default(false)
 }
 
 model Events {
-  id              Int              @id @default(autoincrement())
-  title           String           @db.VarChar(250)
-  description     String           @db.VarChar(999)
+  id              Int                @id @default(autoincrement())
+  title           String             @db.VarChar(250)
+  description     String             @db.VarChar(999)
   date            DateTime
   times           String
   duration        Int //В МИНУТАХ
   cabinet         String
   people_count    Int
   whoClasses      String
-  isDelete        Boolean          @default(false)
+  isDelete        Boolean            @default(false)
   prepod          String
-  createdAt       DateTime         @default(now())
-  eventSpeciality EventSpeciality @relation(fields: [specialityId], references: [id])
+  createdAt       DateTime           @default(now())
+  eventSpeciality EventSpeciality    @relation(fields: [specialityId], references: [id])
   specialityId    Int
-  recordGr  RecordGroup[]
-  recordInv RecordInvididual[]
+  recordGr        RecordGroup[]
+  recordInv       RecordInvididual[]
 }
 
 model EventSpeciality {
-  id    Int    @id @default(autoincrement())
-  title String 
+  id              Int      @id @default(autoincrement())
+  title           String
   eventSpeciality Events[]
 }
 
@@ -53,12 +54,12 @@ model RecordGroup {
   id                 Int      @id @default(autoincrement())
   school             String
   class              String
-  firstNameAttendant String 
-  lastNameAttendant  String 
-  SurnameAttendant   String? 
+  firstNameAttendant String
+  lastNameAttendant  String
+  SurnameAttendant   String?
   phone              String
-  countPeople        Int 
-  listPeople         String 
+  countPeople        Int
+  listPeople         String
   createdAt          DateTime @default(now())
 
   //на какой записались
@@ -68,9 +69,9 @@ model RecordGroup {
 
 model RecordInvididual {
   id              Int      @id @default(autoincrement())
-  firstName       String 
-  lastName        String 
-  surname         String? 
+  firstName       String
+  lastName        String
+  surname         String?
   school          String
   class           String
   telephoneNumber String
@@ -79,10 +80,9 @@ model RecordInvididual {
   eventsId        Int?
 }
 
-
-
 enum ROLES {
   ADMIN
   USER
 }
+
 //62000
