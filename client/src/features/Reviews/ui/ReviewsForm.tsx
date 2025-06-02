@@ -25,7 +25,7 @@ const Reviews = memo(() => {
             // dispatch(fetchGetReviews())
         }
         else {
-            message.error(payload?.message)
+            message.error("Не удалось создать отзыв")
         }
     }
 
