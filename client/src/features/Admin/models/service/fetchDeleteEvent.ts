@@ -1,6 +1,5 @@
 
 import $api from "@/app/config/api";
-import { fetchGetEvents } from "@/entities/EventsList/model/service/fetchEventList";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
