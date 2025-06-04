@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Flex from "antd/es/flex";
 import Typography from "antd/es/typography";
+import message from "antd/es/message";
 
 
 const ReviewsPage = () => {
@@ -22,8 +23,10 @@ const ReviewsPage = () => {
             if(youSecretWord === secretWord){
                 dispatch(fetchGetReviews("bad"))
                 youSecretWord = ""
+                message.success("Вы нашли пасхалку!")
             }
             else{
+                console.log('ne')
                 youSecretWord = ""
             }
         }

@@ -1,4 +1,6 @@
 import $api from "@/app/config/api";
+import { eventsSliceActions } from "@/entities/EventsList";
+import { fetchGetEvents } from "@/entities/EventsList/model/service/fetchEventList";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
@@ -89,6 +91,8 @@ export const fetchCreateEvents = createAsyncThunk<CreateEventResponse, CreateEve
             });
 
             if (response?.status === 200) {
+                thunkAPI.dispatch(eventsSliceActions.setEvents())
+                thunkAPI.dispatch(fetchGetEvents({}))
                 return response.data
             }
 

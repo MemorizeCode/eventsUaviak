@@ -74,9 +74,14 @@ const EventOne = memo(({ event, openModal, openModalGroup, mest }: EventProps) =
     return eventDate < currentDate
   }, [event.date]);
 
+
   return (
-    <Card className={styles.eventCard}>
-      <div className={styles.content}>
+    <Card className={styles.eventCard} style={{
+      width: 540,
+      position: 'relative', // Для абсолютного позиционирования кнопок
+      paddingBottom: 80,   // Отступ снизу, чтобы кнопки не перекрывали контент
+    }} >
+      <div className={styles.content} style={{ flex: 1, overflow: 'auto' }}>
         <Title level={4} style={titleStyle}>{event.title}</Title>
         {memoizedDescription}
 

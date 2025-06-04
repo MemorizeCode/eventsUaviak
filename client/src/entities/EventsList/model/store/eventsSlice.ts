@@ -30,6 +30,9 @@ export const eventsSlice = createSlice({
         },
         setIsLoading: (state, action: PayloadAction<boolean>) => {
             state.isLoading = action.payload
+        },
+        setEvents: (state) => {
+            state.eventList = []
         }
     },
     extraReducers: (builder) => {

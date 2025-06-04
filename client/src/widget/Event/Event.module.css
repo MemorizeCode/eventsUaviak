@@ -1,0 +1,16 @@
+.eventCard {
+    position: relative;
+    padding-bottom: 80px;
+  }
+  
+  .content {
+    max-height: 800px;
+    overflow-y: auto;  
+  }
+  
+  .buttons {
+    position: absolute;
+    bottom: 16px;     
+    left: 16px;      
+    right: 16px;       
+  }

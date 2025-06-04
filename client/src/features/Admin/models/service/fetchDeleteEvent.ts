@@ -1,5 +1,6 @@
 
 import $api from "@/app/config/api";
+import { fetchGetEvents } from "@/entities/EventsList/model/service/fetchEventList";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 
@@ -35,6 +36,7 @@ export const fetchDeleteEvent = createAsyncThunk<DeleteEventResponse, DeleteEven
             }
             const response = await $api.delete<DeleteEventResponse>(`/events/deleteEvent/?id=${data.idEvent}`)
             if (response?.status === 200) {
+                // thunkAPI.dispatch(fetchGetEvents({}))
                 return response?.data
             }
             return thunkAPI.rejectWithValue({
