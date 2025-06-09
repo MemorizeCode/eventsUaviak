@@ -12,4 +12,11 @@ export class AppController {
   async loadSpecial() {
     return await this.appService.loadSpecial();
   }
+
+  @UseGuards(AdminGuard)
+  @Post('/ev/def')
+  @HttpCode(200)
+  async loadEvents() {
+    return await this.appService.loadEvents();
+  }
 }

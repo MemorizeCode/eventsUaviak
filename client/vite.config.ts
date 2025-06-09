@@ -6,7 +6,7 @@ import { compression } from 'vite-plugin-compression2';
 
 export default defineConfig({
   plugins: [
-    MillionLint.vite({ enabled: true }),
+    // MillionLint.vite({ enabled: true }),
     compression({
       algorithm: 'brotliCompress',
       exclude: [/\.(br)$/, /\.(gz)$/],

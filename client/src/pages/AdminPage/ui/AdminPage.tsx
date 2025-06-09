@@ -20,6 +20,7 @@ import Flex from "antd/es/flex";
 import Title from "antd/es/typography/Title";
 import { Suspense, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { eventsSliceActions } from "@/entities/EventsList";
 
 
 const AdminPage = () => {
@@ -38,6 +39,17 @@ const AdminPage = () => {
             message.error(response?.data?.message)
         }
         dispatch(fetchAllSpecial())
+    }
+
+    async function loadEvents() {
+        const response = await $api.post('/ev/def')
+        if(response.status === 200) {
+            message.success('Мероприятия успешно загружены')
+        }
+        else{
+            message.error(response?.data?.message)
+        }
+        dispatch(eventsSliceActions.setEvents())
     }
 
     return (
@@ -77,6 +89,10 @@ const AdminPage = () => {
                     <Card>
                         <Title level={5}>Загрузить специальности по умолчанию</Title>
                         <Button onClick={loadSpecial} type="primary">Загрузить</Button>
+                    </Card>
+                    <Card>
+                        <Title level={5}>Загрузить тестовые мероприятия</Title>
+                        <Button onClick={loadEvents} type="primary">Загрузить</Button>
                     </Card>
                 </Suspense>
             </Flex>
