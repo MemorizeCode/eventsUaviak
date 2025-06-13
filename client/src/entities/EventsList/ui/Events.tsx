@@ -58,7 +58,7 @@ const Events = memo(() => {
                 mest={e.ostalosMest}
             />
         ));
-    }, [eventList, isLoading, openModal, openModalGroup]);
+    }, [eventList]);
 
     return (
         <>

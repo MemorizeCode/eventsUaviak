@@ -199,7 +199,7 @@ export class EventsService {
         take: limit,
         skip: (page - 1) * limit,
         orderBy: {
-          createdAt: "desc"
+          date: "asc"
         },
       });
 
@@ -212,15 +212,15 @@ export class EventsService {
           const [records, recordGr] = await Promise.all([
             this.prisma.recordInvididual.findMany({
               where: { eventsId: Number(event.id) },
-              orderBy: {
-                createdAt: 'desc',
-              },
+              // orderBy: {
+              //   createdAt: 'desc',
+              // },
             }),
             this.prisma.recordGroup.findMany({
               where: { eventsId: Number(event.id) },
-              orderBy: {
-                createdAt: 'desc',
-              },
+              // orderBy: {
+              //   createdAt: 'desc',
+              // },
             }),
           ]);
 

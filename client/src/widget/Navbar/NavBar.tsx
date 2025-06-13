@@ -41,10 +41,10 @@ const NavBar = memo(() => {
 
   //основа
   const mainMenuItems = [
-    {
-      key: "0",
-      label: <img src={logo} alt="logo" />
-    },
+    // {
+    //   key: "0",
+    //   label: <img src={logo} alt="logo" />
+    // },
     {
       key: "1",
       label: <NavLink to="/" style={{ fontSize: "16px" }}>ГЛАВНАЯ</NavLink>,
@@ -127,10 +127,11 @@ const NavBar = memo(() => {
               .ant-menu-item a.active {
                 color: #456B92 !important;
                 text-decoration: none !important;
-              }
-            `}
+                }
+                `}
         </style>
-        <Row justify="space-between" align="middle" style={{ background: "white" }}>
+        <Row justify={"space-between"} align="middle" style={{ background: "white" }}>
+        <img src={logo} alt="logo" />
           <Col xs={0} sm={0} md={20}>
             <Menu
               theme="light"

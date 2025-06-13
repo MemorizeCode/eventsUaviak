@@ -49,9 +49,9 @@ const Reviews = memo(() => {
             >
                 <Input.TextArea rows={4} maxLength={500} showCount />
             </Form.Item>
-            <Form.Item name="stars" label="Оценка" rules={[{ required: true, message: "Пожалуйста, поставьте оценку!" }]}>
+            <Form.Item name="stars" label="Оценка" rules={[{ required: true, message: "Пожалуйста, поставьте оценку!" }]}   >
                     <Rate
-                        defaultValue={rating}
+                        value={rating}
                         onChange={setRaiting}
                         allowClear={false}
                     />
