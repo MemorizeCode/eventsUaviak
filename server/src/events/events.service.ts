@@ -199,7 +199,7 @@ export class EventsService {
         take: limit,
         skip: (page - 1) * limit,
         orderBy: {
-          createdAt: 'desc',
+          createdAt: "desc"
         },
       });
 
@@ -234,29 +234,6 @@ export class EventsService {
           };
         }),
       );
-
-      // const result = await Promise.all(
-      //   events.map(async (event) => {
-      //     const [individualCount, groupCount] = await Promise.all([
-      //       this.prisma.recordInvididual.count({
-      //         where: { eventsId: Number(event.id) },
-      //       }),
-      //       this.prisma.recordGroup.aggregate({
-      //         where: { eventsId: Number(event.id) },
-      //         _sum: {
-      //           countPeople: true,
-      //         },
-      //       }),
-      //     ]);
-      
-      //     const totalCount = individualCount + (groupCount._sum.countPeople || 0);
-      
-      //     return {
-      //       event,
-      //       ostalosMest: event.people_count - totalCount,
-      //     };
-      //   }),
-      // );
 
       const total = await this.prisma.events.count({
         where: {
