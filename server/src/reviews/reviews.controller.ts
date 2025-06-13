@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -12,6 +13,7 @@ import {
 import { ReviewsService } from './reviews.service';
 import { ReviewsDTO } from './dto/ReviewsDTO';
 import { AdminGuard } from 'src/guard/admin.guard';
+import { query } from 'express';
 
 @Controller('/reviews')
 export class ReviewsController {
@@ -33,6 +35,23 @@ export class ReviewsController {
     const result = await this.reviewsService.deleteReview(id);
     return result;
   }
+
+  @UseGuards(AdminGuard)
+  @Get("/getReviewsAdmin")
+  @HttpCode(200)
+  async getReviewsAdmin(){
+    return await this.reviewsService.getReviewsAdmin()
+  }
+
+  @UseGuards(AdminGuard)
+  @Put("/confirmReviews")
+  @HttpCode(200)
+  async confirmReviews(@Query() query){
+    const { id } = query;
+    const result = await this.reviewsService.confirmReviews(Number(id));
+    return result;
+  }
+
 
   @Get('/getReviews')
   @HttpCode(200)

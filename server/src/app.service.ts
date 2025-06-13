@@ -80,7 +80,7 @@ export class AppService {
   async loadEvents(){
     try{
       const isEvents = await this.prisma.events.findMany()
-      if(isEvents){
+      if(isEvents.length > 0){
         throw new HttpException("Мероприятия тестовые уже есть", HttpStatus.BAD_GATEWAY)
       }
       const events = await this.prisma.events.createMany({

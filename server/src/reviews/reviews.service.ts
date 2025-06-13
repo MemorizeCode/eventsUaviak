@@ -4,7 +4,7 @@ import { ReviewsDTO } from './dto/ReviewsDTO';
 import * as luxon from 'luxon';
 @Injectable()
 export class ReviewsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async createViews(body: ReviewsDTO, secretKey) {
     try {
@@ -21,6 +21,7 @@ export class ReviewsService {
             title: body.reviews,
             name: body.name,
             stars: Number(body.stars),
+            isBad: true,
             createdAt: luxon.DateTime.now().toISO(),
           },
         });
@@ -39,7 +40,12 @@ export class ReviewsService {
 
   async getReviews() {
     try {
-      const reviews = await this.prisma.reviews.findMany();
+      const reviews = await this.prisma.reviews.findMany({
+        where: {
+          isDeleted: false,
+          isBad: false
+        }
+      });
       if (reviews) {
         return { data: reviews.reverse() };
       }
@@ -56,6 +62,54 @@ export class ReviewsService {
     }
   }
 
+
+  async getReviewsAdmin() {
+    try {
+      const reviews = await this.prisma.reviews.findMany({
+        where: {
+          isBad: true,
+          isDeleted: false
+        }
+      })
+
+      return { reviews: reviews.reverse() }
+    }
+    catch (e) {
+      if (e instanceof HttpException) {
+        throw e
+      }
+      throw new HttpException(
+        'Не известная ошибка. Попробуйте позже',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async confirmReviews(id) {
+    try {
+      await this.prisma.reviews.update({
+        data: {
+          isBad: false
+        },
+        where:{
+          id: id
+        }
+      })
+
+      return { message: "Отзыв поодтвержден"}
+    }
+    catch (e) {
+      if (e instanceof HttpException) {
+        throw e
+      }
+      throw new HttpException(
+        'Не известная ошибка. Попробуйте позже',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+
   async deleteReview(id) {
     try {
       const isReviews = await this.prisma.reviews.findUnique({
@@ -64,13 +118,10 @@ export class ReviewsService {
         },
       });
       if (isReviews) {
-        await this.prisma.reviews.update({
+        await this.prisma.reviews.delete({
           where: {
             id: Number(id),
           },
-          data: {
-            isDeleted: true
-          }
         });
         return { message: 'Успешно удален отзыв' };
       }

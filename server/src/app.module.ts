@@ -48,6 +48,8 @@ export class AppModule implements NestModule {
         { path: '/api/events/deleteEvent', method: RequestMethod.DELETE },
         { path: '/api/record/getRecords', method: RequestMethod.GET },
         { path: '/api/reviews/deleteReviews', method: RequestMethod.DELETE },
+        { path: '/api/reviews/getReviewsAdmin', method: RequestMethod.GET },
+        { path: '/api/reviews/confirmReviews', method: RequestMethod.PUT },
         { path: '/api/spesial/createSpesial', method: RequestMethod.POST },
         { path: '/api/spesial/deleteSpesial', method: RequestMethod.DELETE },
         { path: '/api/spesial/updateSpecial', method: RequestMethod.PUT },

@@ -1,6 +1,7 @@
 import $api from "@/app/config/api";
 import { AppDispatch } from "@/app/providers/store/store";
 import {
+    ConfirmReviewsAsync,
     CreateEventAsync,
     DeleteEventsAsync,
     DeleteReviewsAsync,
@@ -70,6 +71,7 @@ const AdminPage = () => {
             <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "50px" }}>
                 <Suspense fallback={<div>Loading delete reviews...</div>}>
                     <DeleteReviewsAsync />
+                    <ConfirmReviewsAsync />
                 </Suspense>
             </Flex>
             <Flex wrap="wrap" gap="middle" flex={1} style={{ marginTop: "50px" }}>
