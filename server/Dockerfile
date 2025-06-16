@@ -2,7 +2,10 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-COPY package*..json ./
+# Устанавливаем переменную окружения для зеркала Prisma потому что ркн говна поел
+ENV PRISMA_ENGINES_MIRROR="https://registry.npmmirror.com/-/binary/prisma"
+
+COPY package*.json ./
 
 COPY prisma ./prisma/
 
@@ -15,7 +18,6 @@ COPY . .
 RUN npm run build
 
 EXPOSE 3000
-
 
 CMD ["npm", "run", "start:prod"]
 
