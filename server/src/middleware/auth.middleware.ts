@@ -9,10 +9,8 @@ import { TokenService } from 'src/service/token.service';
 export class AuthMiddleware implements NestMiddleware {
   constructor(private readonly jwt: TokenService) {}
   async use(req: any, res: any, next: any) {
-    //Check Token
     const header = req.headers.authorization;
-    const secretKey = req.headers['secret-key']?.trim();
-
+ 
     if (!header) {
       throw new UnauthorizedException('Отсутствует токен авторизации');
     }

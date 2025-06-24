@@ -119,6 +119,7 @@ const NavBar = memo(() => {
       : []),
   ];
 
+  const isMobile = window.innerWidth < 500
   return (
     <Layout>
       <Header style={{ padding: 0 }}>
@@ -130,7 +131,7 @@ const NavBar = memo(() => {
                 }
                 `}
         </style>
-        <Row justify={"space-between"} align="middle" style={{ background: "white" }}>
+        <Row justify={isMobile ? "space-between" : "start"} align="middle" style={{ background: "white" }}>
         <img src={logo} alt="logo" />
           <Col xs={0} sm={0} md={20}>
             <Menu

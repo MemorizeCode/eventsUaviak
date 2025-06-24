@@ -191,6 +191,15 @@ export class OtchetService {
         (a: any, b: any) => b.totalRegistrations - a.totalRegistrations,
       );
 
+      // Проверяем, есть ли вообще регистрации
+      const hasRegistrations = sortedSpecialities.some(
+        (spec: any) => spec.totalRegistrations > 0
+      );
+
+      if (!hasRegistrations) {
+        return { message: 'Нет регистраций на мероприятия' };
+      }
+
       return {
         message: 'Статистика по спец. востребованны',
         data: sortedSpecialities[0],
