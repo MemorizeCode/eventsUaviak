@@ -73,6 +73,7 @@ export class RecordController {
     return result;
   }
 
+  //сделай проверку на тип файла
   @Post('/createGroupRecord')
   @UseInterceptors(
     FileInterceptor('fileList', {
@@ -83,7 +84,11 @@ export class RecordController {
             .fill(null)
             .map(() => Math.round(Math.random() * 16).toString(16))
             .join('');
-          cb(null, `${randomName}${extname(file.originalname)}`);
+          const fileType = file.mimetype.split('/')[1];
+          if(fileType !== 'vnd.openxmlformats-officedocument.wordprocessingml.document'){
+            throw new HttpException('Не верный тип файла', HttpStatus.BAD_REQUEST);
+          }
+          cb(null, `${file.originalname}-${randomName}${extname(file.originalname)}`);
         },
       }),
     }),

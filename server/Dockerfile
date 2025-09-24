@@ -1,24 +1,34 @@
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Устанавливаем переменную окружения для зеркала Prisma потому что ркн говна поел
-ENV PRISMA_ENGINES_MIRROR="https://registry.npmmirror.com/-/binary/prisma"
+# Создаём непривилегированного пользователя (чтобы запускалось не от root)
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-COPY package*.json ./
+COPY --chown=appuser:appgroup package*.json ./
+RUN npm ci
 
-COPY prisma ./prisma/
+COPY --chown=appuser:appgroup tsconfig*.json ./
+COPY --chown=appuser:appgroup nest-cli.json ./
 
-RUN npm install --ignore-scripts
-
+COPY --chown=appuser:appgroup prisma ./prisma/
 RUN npx prisma generate
 
-COPY . .
+COPY --chown=appuser:appgroup src ./src
 
 RUN npm run build
 
-EXPOSE 3000
 
-CMD ["npm", "run", "start:prod"]
+USER root
+RUN apk add --no-cache bash
 
-# CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]
+RUN chown -R appuser:appgroup /app
+
+# Переключаемся на appuser
+USER appuser
+
+EXPOSE 5000
+
+# CMD ["npm", "run", "start:prod"]
+
+CMD ["sh", "-c", "npx prisma migrate deploy && npm run start:prod"]

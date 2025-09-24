@@ -37,7 +37,7 @@ export class AdminGuard implements CanActivate {
       }
 
       const user = await this.prisma.user.findUnique({
-        where: { id: decoded.id },
+        where: { id: decoded.id as number },
       });
 
       if (!user) {

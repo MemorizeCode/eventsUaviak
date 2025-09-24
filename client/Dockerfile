@@ -1,4 +1,4 @@
-FROM mirror.gcr.io/library/node:18 as builder
+FROM mirror.gcr.io/library/node:20 as builder
 
 WORKDIR /app
 
